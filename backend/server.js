@@ -1,0 +1,55 @@
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+const app = express();
+
+// Middleware
+app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(express.json());
+
+// Routes
+const hotelRoutes = require('./routes/hotels');
+const voyageRoutes = require('./routes/voyages');
+const busRoutes = require('./routes/bus');
+const searchRoutes = require('./routes/search');
+const authRoutes = require('./routes/auth');
+const volRoutes = require('./routes/vols');
+const reservationRoutes = require('./routes/reservations');
+
+app.use('/api/hotels', hotelRoutes);
+app.use('/api/voyages', voyageRoutes);
+app.use('/api/bus', busRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/vols', volRoutes);
+app.use('/api/reservations', reservationRoutes);
+
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(async () => {
+    console.log('✅ Connected to MongoDB');
+    const Hotel = require('./models/Hotel');
+    const Voyage = require('./models/Voyage');
+    const Bus = require('./models/Bus');
+    const City = require('./models/City');
+    const Vol = require('./models/Vol');
+    const Reservation = require('./models/Reservation');
+
+    await Hotel.createCollection().catch(e => {});
+    await Voyage.createCollection().catch(e => {});
+    await Bus.createCollection().catch(e => {});
+    await City.createCollection().catch(e => {});
+    await Vol.createCollection().catch(e => {});
+    await Reservation.createCollection().catch(e => {});
+
+    console.log('✅ MongoDB collections ensured.');
+  })
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
+});

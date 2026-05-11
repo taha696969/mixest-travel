@@ -1,0 +1,252 @@
+<div class="page-header">
+  <div class="container">
+    <h1>{{ cityFilter ? (cityFilter | titlecase) : 'Destinations de Voyage' }}</h1>
+  </div>
+</div>
+
+<!-- ===== DESTINATION SELECTION VIEW (When no cityFilter) ===== -->
+<section class="destinations-section container" *ngIf="!cityFilter">
+  <div class="dest-grid">
+    <div class="dest-card" *ngFor="let dest of uniqueDestinations" (click)="selectDestination(dest)">
+      <div class="dest-img-container">
+        <img [src]="destImages[dest] || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="dest">
+        <div class="dest-overlay">
+          <h3>{{ dest | titlecase }}</h3>
+          <span class="btn-discover">Voir les voyages <i class="fas fa-chevron-right"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="uniqueDestinations.length === 0" class="no-data">
+    <i class="fas fa-globe-africa"></i>
+    <p>Aucune destination n'est disponible pour le moment.</p>
+  </div>
+</section>
+
+<!-- ===== VOYAGES LIST VIEW (When cityFilter is present) ===== -->
+<div *ngIf="cityFilter">
+  <!-- ===== SORT BAR ===== -->
+  <div class="container sort-bar">
+    <div class="sort-content">
+      <div class="sort-left">
+        <button class="btn-back-main" (click)="selectDestination('')"><i class="fas fa-arrow-left"></i> Toutes les destinations</button>
+        <span class="results-count"><strong>{{ voyages.length }}</strong> Voyages trouvés</span>
+      </div>
+      <div class="sort-select">
+        <label for="sort">Trier par :</label>
+        <select id="sort" [(ngModel)]="sortOption" (change)="onSortChange()">
+          <option value="recommandation">Récommandation</option>
+          <option value="price_asc">Prix croissant</option>
+          <option value="price_desc">Prix décroissant</option>
+          <option value="duration">Durée (Jours)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <section class="items-section container">
+    <div *ngIf="voyages.length === 0" class="no-data">
+      <i class="fas fa-plane-departure"></i>
+      <p>Aucun voyage n'est disponible pour cette destination.</p>
+    </div>
+
+    <div *ngIf="voyages.length > 0" class="items-grid list-view">
+      <div class="item-card" *ngFor="let voyage of voyages" (click)="openModal(voyage)">
+        <div class="card-img-container">
+          <img [src]="voyage.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="voyage.titre">
+          <span class="badge" *ngIf="voyage.type">{{ voyage.type | titlecase }}</span>
+          <div class="card-overlay">
+            <span><i class="fas fa-search-plus"></i> Voir les détails</span>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3>{{ voyage.titre }}</h3>
+            <p class="destination"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</p>
+          </div>
+          <p class="desc">{{ voyage.description }}</p>
+          <div class="card-footer">
+            <div class="meta-info">
+              <span class="duration"><i class="far fa-clock"></i> {{ voyage.duree }} Jours</span>
+              <div class="prices">
+                <div class="price-item">
+                  <span class="label">Adulte:</span>
+                  <span class="val">{{ voyage.discountPrice_adult || voyage.price_adult }} TND</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-reserver">Découvrir <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== MODAL OVERLAY ===== -->
+<div class="modal-overlay" *ngIf="selectedVoyage" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <!-- CLOSE BUTTON -->
+    <button class="modal-close" (click)="closeModal()"><i class="fas fa-times"></i></button>
+
+    <!-- ── STEP 1: DETAILS ── -->
+    <div *ngIf="modalStep === 'details'" class="modal-details">
+      <div class="modal-img">
+        <img [src]="selectedVoyage.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="selectedVoyage.titre">
+        <div class="modal-img-overlay">
+          <span class="badge-large">{{ selectedVoyage.type | titlecase }}</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h2>{{ selectedVoyage.titre }}</h2>
+        <p class="modal-location"><i class="fas fa-map-marker-alt"></i> {{ selectedVoyage.destination }} &bull; <i class="far fa-clock"></i> {{ selectedVoyage.duree }} Jours</p>
+        <p class="modal-description">{{ selectedVoyage.description || 'Un magnifique voyage organisé avec tout le confort.' }}</p>
+        <div class="stops-container" *ngIf="selectedVoyage.stopPoints?.length > 0">
+          <h4><i class="fas fa-route"></i> Itinéraire</h4>
+          <div class="stops-list">
+            <span *ngFor="let stop of selectedVoyage.stopPoints; let last = last">
+              {{ stop }} <i class="fas fa-arrow-right" *ngIf="!last"></i>
+            </span>
+          </div>
+        </div>
+        <div class="modal-prices-grid">
+          <div class="price-card">
+            <span class="price-label"><i class="fas fa-user"></i> Adulte</span>
+            <span class="old" *ngIf="selectedVoyage.discountPrice_adult">{{ selectedVoyage.price_adult }} TND</span>
+            <span class="price-val">{{ selectedVoyage.discountPrice_adult || selectedVoyage.price_adult }} TND</span>
+          </div>
+          <div class="price-card">
+            <span class="price-label"><i class="fas fa-child"></i> Enfant</span>
+            <span class="old" *ngIf="selectedVoyage.discountPrice_kid">{{ selectedVoyage.price_kid }} TND</span>
+            <span class="price-val">{{ selectedVoyage.discountPrice_kid || selectedVoyage.price_kid }} TND</span>
+          </div>
+        </div>
+        <button class="btn-primary-modal" (click)="goToVols()">
+          <i class="fas fa-plane"></i> Voir les vols disponibles
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: VOLS & AIRLINES ── -->
+    <div *ngIf="modalStep === 'vols'" class="modal-vols">
+      <div class="modal-header">
+        <button class="btn-back" (click)="modalStep = 'details'"><i class="fas fa-arrow-left"></i> Retour</button>
+        <h2><i class="fas fa-plane-departure"></i> Vols pour {{ selectedVoyage.destination }}</h2>
+        <p>Sélectionnez une compagnie aérienne</p>
+      </div>
+      <div class="vols-body">
+        <div *ngIf="volsAvailable.length === 0" class="no-vols">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>Aucun vol enregistré pour cette destination.</p>
+        </div>
+        <div *ngFor="let vol of volsAvailable" class="vol-group">
+          <div class="vol-info">
+            <img [src]="vol.image || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=200'" alt="vol">
+            <div>
+              <h3>Vols vers {{ vol.destination }}</h3>
+              <p><i class="fas fa-globe"></i> Pays: {{ vol.pays }}</p>
+              <p class="desc-small">{{ vol.description }}</p>
+            </div>
+          </div>
+          <div class="vols-list-vertical">
+            <div class="vol-item-row" 
+                 *ngFor="let c of vol.compagnies" 
+                 [class.selected]="selectedCompagnie === c"
+                 (click)="selectCompagnie(vol, c)">
+              
+              <!-- Logo -->
+              <div class="v-logo">
+                <img [src]="c.logo || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=100'" [alt]="c.nom">
+              </div>
+
+              <!-- Journey -->
+              <div class="v-journey">
+                <div class="v-time">
+                  <span class="t-main">{{ c.date_depart || '4/11' }}</span>
+                  <span class="t-sub">Tunis (TUN)</span>
+                </div>
+                <div class="v-arrow">
+                  <span class="v-dur">{{ c.duree_texte || '8j/7n' }}</span>
+                  <div class="arrow-line">
+                    <i class="fas fa-plane"></i>
+                  </div>
+                  <span class="v-type">Direct</span>
+                </div>
+                <div class="v-time">
+                  <span class="t-main">{{ c.date_arrivee || '11/11' }}</span>
+                  <span class="t-sub">{{ vol.destination }}</span>
+                </div>
+              </div>
+
+              <!-- Class -->
+              <div class="v-class">
+                <span class="c-badge">{{ c.classe }}</span>
+              </div>
+
+              <!-- Price -->
+              <div class="v-price">
+                <span class="p-label">Par personne</span>
+                <span class="p-val">{{ c.prix_adulte }} TND</span>
+              </div>
+
+              <!-- Selector -->
+              <div class="v-select">
+                <div class="radio-circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary-modal" (click)="goToContact()" [disabled]="!selectedCompagnie && volsAvailable.length > 0">
+          <i class="fas fa-file-invoice"></i> Obtenir un devis
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: CONTACT / DEVIS ── -->
+    <div *ngIf="modalStep === 'contact'" class="modal-contact">
+      <div class="modal-header">
+        <button class="btn-back" (click)="modalStep = 'vols'"><i class="fas fa-arrow-left"></i> Retour</button>
+        <h2><i class="fas fa-file-invoice-dollar"></i> Demande de devis</h2>
+        <p>Voyage: {{ selectedVoyage.titre }}</p>
+        <p *ngIf="selectedCompagnie" class="selected-vol-info">
+          Compagnie: <strong>{{ selectedCompagnie.nom }}</strong> ({{ selectedCompagnie.classe }})
+        </p>
+      </div>
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="contact.nom" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" [(ngModel)]="contact.prenom" placeholder="Votre prénom" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Portable</label>
+            <input type="tel" [(ngModel)]="contact.portable" placeholder="+216 XX XXX XXX" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" [(ngModel)]="contact.email" placeholder="votre@email.com" required>
+          </div>
+        </div>
+        <button class="btn-primary-modal" (click)="submitDevis()" [disabled]="submitting || !contact.nom || !contact.prenom || !contact.portable || !contact.email">
+          <span *ngIf="!submitting"><i class="fas fa-paper-plane"></i> Envoyer la demande</span>
+          <span *ngIf="submitting"><i class="fas fa-spinner fa-spin"></i> Envoi en cours...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: SUCCESS ── -->
+    <div *ngIf="modalStep === 'success'" class="modal-success">
+      <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+      <h2>Devis envoyé !</h2>
+      <p>Merci <strong>{{ contact.prenom }} {{ contact.nom }}</strong>, votre demande pour le voyage <strong>{{ selectedVoyage.titre }}</strong> a bien été enregistrée.</p>
+      <p class="success-sub">Un conseiller vous contactera rapidement au <strong>{{ contact.portable }}</strong> avec une offre personnalisée.</p>
+      <button class="btn-primary-modal" (click)="closeModal()">Retour aux voyages</button>
+    </div>
+  </div>
+</div>

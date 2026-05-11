@@ -1,0 +1,225 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Administration - Tunisie Travel</h1>
+    <button (click)="logout()" class="btn-logout">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </button>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="currentTab === 'hotels'" (click)="switchTab('hotels')">Hôtels</button>
+    <button [class.active]="currentTab === 'voyages'" (click)="switchTab('voyages')">Voyages</button>
+    <button [class.active]="currentTab === 'bus'" (click)="switchTab('bus')">Bus</button>
+    <button [class.active]="currentTab === 'vols'" (click)="switchTab('vols')">Vols / Airlines</button>
+    <button [class.active]="currentTab === 'reservations'" (click)="switchTab('reservations')" class="btn-res-tab">
+      Réservations <span class="badge-count" *ngIf="reservations.length">{{ reservations.length }}</span>
+    </button>
+  </div>
+
+  <!-- HÔTELS TAB -->
+  <div class="tab-content" *ngIf="currentTab === 'hotels'">
+    <h2>Gestion des Hôtels</h2>
+    <form (ngSubmit)="saveHotel()" #hForm="ngForm" class="admin-form">
+      <input type="text" [(ngModel)]="hotelForm.nom" name="nom" placeholder="Nom de l'hôtel" required>
+      <select [(ngModel)]="hotelForm.destination" name="destination" required>
+        <option value="" disabled>Choisir une destination</option>
+        <option *ngFor="let d of hotelDestinations" [value]="d">{{ d | titlecase }}</option>
+      </select>
+      <select [(ngModel)]="hotelForm.region" name="region" required>
+        <option value="nord">Nord</option>
+        <option value="centre">Centre</option>
+        <option value="sud">Sud</option>
+      </select>
+      <input type="number" [(ngModel)]="hotelForm.etoiles" name="etoiles" placeholder="Étoiles (1-5)">
+      <input type="number" [(ngModel)]="hotelForm.price_adult" name="price_adult" placeholder="Prix Adulte" required>
+      <input type="number" [(ngModel)]="hotelForm.price_kid" name="price_kid" placeholder="Prix Enfant" required>
+      <input type="number" [(ngModel)]="hotelForm.discountPrice_adult" name="discountPrice_adult" placeholder="Prix Réduit Adulte">
+      <input type="number" [(ngModel)]="hotelForm.discountPrice_kid" name="discountPrice_kid" placeholder="Prix Réduit Enfant">
+      <input type="text" [(ngModel)]="hotelForm.image" name="image" placeholder="URL de l'image">
+      <textarea [(ngModel)]="hotelForm.description" name="description" placeholder="Description"></textarea>
+      
+      <h3>Prix d'été (Juin - Septembre)</h3>
+      <div class="month-inputs">
+        <div class="month-group" *ngFor="let m of ['june','july','august','september']">
+          <h4>{{ m | titlecase }}</h4>
+          <input type="number" [(ngModel)]="hotelForm.summer_prices[m].adult" [name]="m+'_ad'" placeholder="Adulte">
+          <input type="number" [(ngModel)]="hotelForm.summer_prices[m].kid" [name]="m+'_kid'" placeholder="Enfant">
+        </div>
+      </div>
+
+      <label><input type="checkbox" [(ngModel)]="hotelForm.disponible" name="disponible"> Disponible</label>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="!hForm.valid">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
+        <button type="button" class="btn-secondary" *ngIf="isEditing" (click)="resetForm()">Annuler</button>
+      </div>
+    </form>
+
+    <table class="admin-table">
+      <thead><tr><th>Nom</th><th>Dest.</th><th>Prix Ad.</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let h of hotels">
+          <td>{{ h.nom }}</td><td>{{ h.destination }}</td><td>{{ h.price_adult }}</td>
+          <td>
+            <button class="btn-edit" (click)="editItem(h)">Éditer</button>
+            <button class="btn-delete" (click)="deleteItem(h._id)">Suppr.</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VOYAGES TAB -->
+  <div class="tab-content" *ngIf="currentTab === 'voyages'">
+    <h2>Gestion des Voyages</h2>
+    <form (ngSubmit)="saveVoyage()" #vForm="ngForm" class="admin-form">
+      <input type="text" [(ngModel)]="voyageForm.titre" name="titre" placeholder="Titre du voyage" required>
+      <select [(ngModel)]="voyageForm.destination" name="destination" required>
+        <option value="" disabled>Choisir une destination</option>
+        <option *ngFor="let d of voyageDestinations" [value]="d">{{ d | titlecase }}</option>
+      </select>
+      <input type="number" [(ngModel)]="voyageForm.duree" name="duree" placeholder="Durée (Jours)" required>
+      <select [(ngModel)]="voyageForm.type" name="type">
+        <option value="circuit">Circuit</option>
+        <option value="aventure">Aventure</option>
+        <option value="sejour">Séjour</option>
+        <option value="culturel">Culturel</option>
+      </select>
+      <input type="number" [(ngModel)]="voyageForm.price_adult" name="price_adult" placeholder="Prix Adulte" required>
+      <input type="number" [(ngModel)]="voyageForm.price_kid" name="price_kid" placeholder="Prix Enfant" required>
+      <input type="text" [(ngModel)]="voyageForm.stopPointsInput" name="stopPointsInput" placeholder="Arrêts (ex: Tunis, Sousse)">
+      <input type="text" [(ngModel)]="voyageForm.image" name="image" placeholder="URL Image">
+      <textarea [(ngModel)]="voyageForm.description" name="description" placeholder="Description"></textarea>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="!vForm.valid">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
+      </div>
+    </form>
+    <table class="admin-table">
+      <thead><tr><th>Titre</th><th>Dest.</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let v of voyages">
+          <td>{{ v.titre }}</td><td>{{ v.destination }}</td>
+          <td>
+            <button class="btn-edit" (click)="editItem(v)">Éditer</button>
+            <button class="btn-delete" (click)="deleteItem(v._id)">Suppr.</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BUS TAB -->
+  <div class="tab-content" *ngIf="currentTab === 'bus'">
+    <h2>Gestion des Bus</h2>
+    <form (ngSubmit)="saveBus()" #bForm="ngForm" class="admin-form">
+      <input type="text" [(ngModel)]="busForm.depart" name="depart" placeholder="Départ" required>
+      <input type="text" [(ngModel)]="busForm.arrivee" name="arrivee" placeholder="Arrivée" required>
+      <input type="text" [(ngModel)]="busForm.heure" name="heure" placeholder="Heure (ex: 08:00)" required>
+      <input type="number" [(ngModel)]="busForm.prix" name="prix" placeholder="Prix" required>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="!bForm.valid">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- VOLS / AIRLINES TAB -->
+  <div class="tab-content" *ngIf="currentTab === 'vols'">
+    <h2>Gestion des Destinations de Vol</h2>
+    <form (ngSubmit)="saveVol()" #volF="ngForm" class="admin-form">
+      <div class="form-row">
+        <select [(ngModel)]="volForm.destination" name="v_dest" required>
+          <option value="" disabled>Destination (Pays)</option>
+          <option *ngFor="let d of voyageDestinations" [value]="d">{{ d | titlecase }}</option>
+        </select>
+        <input type="text" [(ngModel)]="volForm.pays" name="v_pays" placeholder="Villes (ex: Istanbul, Ankara)" required>
+      </div>
+      <input type="text" [(ngModel)]="volForm.image" name="v_img" placeholder="URL Image">
+      <textarea [(ngModel)]="volForm.description" name="v_desc" placeholder="Description courte"></textarea>
+
+      <h3>Compagnies Aériennes</h3>
+      <div class="compagnies-manager">
+          <div class="compagnie-edit-card" *ngFor="let c of volForm.compagnies; let i = index">
+            <div class="form-row">
+              <input type="text" [(ngModel)]="c.nom" [name]="'c_nom_'+i" placeholder="Compagnie" required>
+              <input type="text" [(ngModel)]="c.logo" [name]="'c_logo_'+i" placeholder="Logo URL">
+            </div>
+            <div class="form-row">
+              <input type="text" [(ngModel)]="c.date_depart" [name]="'c_dep_'+i" placeholder="Départ (ex: 4/11)">
+              <input type="text" [(ngModel)]="c.date_arrivee" [name]="'c_arr_'+i" placeholder="Arrivée (ex: 11/11)">
+              <input type="text" [(ngModel)]="c.duree_texte" [name]="'c_dur_'+i" placeholder="Durée (ex: 8j/7n)">
+            </div>
+            <div class="form-row">
+              <input type="number" [(ngModel)]="c.prix_adulte" [name]="'c_pa_'+i" placeholder="Prix Adulte" required>
+              <input type="number" [(ngModel)]="c.prix_enfant" [name]="'c_pe_'+i" placeholder="Prix Enfant" required>
+              <select [(ngModel)]="c.classe" [name]="'c_cl_'+i">
+                <option value="Économique">Économique</option>
+                <option value="Business">Business</option>
+                <option value="First">First</option>
+              </select>
+            </div>
+            <button type="button" class="btn-delete-small" (click)="removeCompagnie(i)">Supprimer</button>
+          </div>
+        <button type="button" class="btn-add-comp" (click)="addCompagnie()"><i class="fas fa-plus"></i> Ajouter une compagnie</button>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="!volF.valid">{{ isEditing ? 'Modifier' : 'Ajouter' }}</button>
+        <button type="button" class="btn-secondary" (click)="resetForm()">Réinitialiser</button>
+      </div>
+    </form>
+
+    <table class="admin-table">
+      <thead><tr><th>Destination</th><th>Compagnies</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let v of vols">
+          <td>{{ v.destination }}</td>
+          <td>{{ v.compagnies?.length || 0 }} compagnies</td>
+          <td>
+            <button class="btn-edit" (click)="editItem(v)">Éditer</button>
+            <button class="btn-delete" (click)="deleteItem(v._id)">Suppr.</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RESERVATIONS TAB -->
+  <div class="tab-content" *ngIf="currentTab === 'reservations'">
+    <h2>Toutes les Réservations / Demandes de Devis</h2>
+    <div *ngIf="reservations.length === 0" class="no-res">Aucune réservation pour le moment.</div>
+    
+    <div class="res-list">
+      <div *ngFor="let r of reservations" class="res-card" [class]="r.statut">
+        <div class="res-header">
+          <span class="res-type" [class]="r.type">{{ r.type | uppercase }}</span>
+          <span class="res-date">{{ r.createdAt | date:'short' }}</span>
+          <div class="res-status-actions">
+            <select [ngModel]="r.statut" (ngModelChange)="updateReservationStatus(r, $event)">
+              <option value="en_attente">En attente</option>
+              <option value="confirmee">Confirmée</option>
+              <option value="annulee">Annulée</option>
+            </select>
+            <button class="btn-delete-small" (click)="deleteItem(r._id)"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="res-body">
+          <div class="client-info">
+            <h3><i class="fas fa-user"></i> {{ r.prenom }} {{ r.nom }}</h3>
+            <p><i class="fas fa-phone"></i> {{ r.portable }}</p>
+            <p><i class="fas fa-envelope"></i> {{ r.email }}</p>
+          </div>
+          <div class="booking-details">
+            <p><strong>Item:</strong> {{ r.reference_nom }}</p>
+            <div *ngIf="r.type === 'hotel'">
+              <p><strong>Dates:</strong> {{ r.date_debut | date }} - {{ r.date_fin | date }}</p>
+              <p><strong>Passagers:</strong> {{ r.adultes }} Ad. / {{ r.enfants }} Enf.</p>
+            </div>
+            <div *ngIf="r.type === 'vol'">
+              <p><strong>Vol:</strong> {{ r.compagnie }} ({{ r.classe }})</p>
+            </div>
+            <p class="total-price">Total: {{ r.prix_total }} TND</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

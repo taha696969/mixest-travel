@@ -1,0 +1,152 @@
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="container navbar-content">
+    <a routerLink="/" class="brand">
+      <img src="assets/images/logo.png" alt="Mixest Travel Logo" class="logo-img">
+      <span class="brand-text">Mixest Travel</span>
+    </a>
+
+    <button class="menu-toggle" (click)="isMenuOpen = !isMenuOpen">
+      <i class="fas" [ngClass]="isMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+    </button>
+
+    <ul class="nav-links" [class.open]="isMenuOpen">
+      <li class="dropdown">
+        <a routerLink="/hotels">Hôtel en Tunisie <i class="fas fa-chevron-down"></i></a>
+        <div class="dropdown-menu mega-menu">
+          <div class="mega-column">
+            <h4>Sahel</h4>
+            <a routerLink="/hotels" [queryParams]="{city: 'sousse'}">Sousse</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'monastir'}">Monastir</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'mahdia'}">Mahdia</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'port-el-kantaoui'}">Port El Kantaoui</a>
+          </div>
+          <div class="mega-column">
+            <h4>Cap Bon</h4>
+            <a routerLink="/hotels" [queryParams]="{city: 'hammamet'}">Hammamet</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'nabeul'}">Nabeul</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'kelibia'}">Kélibia</a>
+          </div>
+          <div class="mega-column">
+            <h4>Sud & Îles</h4>
+            <a routerLink="/hotels" [queryParams]="{city: 'djerba'}">Djerba</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'zarzis'}">Zarzis</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'tozeur'}">Tozeur</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'douz'}">Douz</a>
+          </div>
+          <div class="mega-column">
+            <h4>Nord</h4>
+            <a routerLink="/hotels" [queryParams]="{city: 'tunis'}">Tunis / Gammarth</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'tabarka'}">Tabarka</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'ain-drahem'}">Aïn Draham</a>
+            <a routerLink="/hotels" [queryParams]="{city: 'bizerte'}">Bizerte</a>
+          </div>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a routerLink="/voyages">Voyage Organisé <i class="fas fa-chevron-down"></i></a>
+        <div class="dropdown-menu mega-menu">
+          <div class="mega-column">
+            <h4>Proche-Orient</h4>
+            <a routerLink="/voyages" [queryParams]="{city: 'istanbul'}">Istanbul</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'dubai'}">Dubaï</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'sharm-el-sheikh'}">Sharm El Sheikh</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'cairo'}">Le Caire</a>
+          </div>
+          <div class="mega-column">
+            <h4>Europe</h4>
+            <a routerLink="/voyages" [queryParams]="{city: 'paris'}">Paris</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'rome'}">Rome</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'barcelona'}">Barcelone</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'madrid'}">Madrid</a>
+          </div>
+          <div class="mega-column">
+            <h4>Asie & Exotique</h4>
+            <a routerLink="/voyages" [queryParams]="{city: 'phuket'}">Phuket</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'bali'}">Bali</a>
+            <a routerLink="/voyages" [queryParams]="{city: 'maldives'}">Maldives</a>
+          </div>
+        </div>
+      </li>
+      <li><a routerLink="/bus">Option du Bus</a></li>
+    </ul>
+    <div class="contact-info">
+      <i class="fas fa-phone-alt"></i>
+      <span>21695780</span>
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+
+<!-- Footer -->
+<footer class="main-footer">
+  <!-- Features Bar -->
+  <div class="footer-features">
+    <div class="container">
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fas fa-headset"></i></div>
+        <div class="feature-text">
+          <strong>Besoin d'aide?</strong>
+          <span>Contactez-nous 7j/7</span>
+          <span class="phone-number">+216 71 124 124</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+        <div class="feature-text">
+          <strong>Meilleur Prix</strong>
+          <span>GARANTI</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fas fa-store"></i></div>
+        <div class="feature-text">
+          <strong>Agences en Tunisie</strong>
+          <span>Proximité & Service</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fas fa-lock"></i></div>
+        <div class="feature-text">
+          <strong>Paiement 100%</strong>
+          <span>sécurisé</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fas fa-smile"></i></div>
+        <div class="feature-text">
+          <strong>Clients Satisfaits</strong>
+          <span>Votre bonheur, notre priorité</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="bottom-left">
+        <div class="flags">
+          <img src="https://flagcdn.com/w40/tn.png" alt="TN">
+          <img src="https://flagcdn.com/w40/fr.png" alt="FR">
+        </div>
+        <nav class="footer-nav">
+          <a routerLink="/admin">Espace Admin</a>
+        </nav>
+      </div>
+      <div class="bottom-right">
+        <div class="social-links">
+          <span>Nous suivre:</span>
+          <a href="https://www.facebook.com/profile.php?id=100068857877185" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/mixesttravelsunny/" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">
+    <div class="container">
+      <p>&copy; 2026 Mixest Travel. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>

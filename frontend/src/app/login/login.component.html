@@ -1,0 +1,54 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="card-header">
+      <i class="fas fa-user-shield admin-icon"></i>
+      <h1>Administration</h1>
+      <p>Connectez-vous pour gérer vos voyages et hôtels.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            [(ngModel)]="credentials.username" 
+            placeholder="admin" 
+            required
+            #user="ngModel">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            [(ngModel)]="credentials.password" 
+            placeholder="••••••••" 
+            required
+            #pass="ngModel">
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <i class="fas fa-exclamation-circle"></i> {{ error }}
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="!loginForm.valid">
+        <span>Se connecter</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="card-footer">
+      <p><a routerLink="/">Retour à l'accueil</a></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,222 @@
+<div class="page-header">
+  <div class="container">
+    <h1>{{ cityFilter ? 'Hôtels à ' + (cityFilter | titlecase) : 'Nos Hôtels en Tunisie' }}</h1>
+  </div>
+</div>
+
+<!-- ===== SORT BAR ===== -->
+<div class="container sort-bar">
+  <div class="sort-content">
+    <span class="results-count"><strong>{{ hotels.length }}</strong> Hôtels trouvés</span>
+    <div class="sort-select">
+      <label for="sort">Trier par :</label>
+      <select id="sort" [(ngModel)]="sortOption" (change)="onSortChange()">
+        <option value="recommandation">Récommandation</option>
+        <option value="price_asc">Prix croissant</option>
+        <option value="price_desc">Prix décroissant</option>
+        <option value="stars">Nombre d'étoiles</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOTEL CARDS GRID ===== -->
+<section class="items-section container">
+  <div *ngIf="hotels.length === 0" class="no-data">
+    <i class="fas fa-hotel"></i>
+    <p>Aucun hôtel n'est disponible pour le moment.</p>
+  </div>
+
+  <div *ngIf="hotels.length > 0" class="items-grid">
+    <div class="item-card" *ngFor="let hotel of hotels" (click)="openModal(hotel)">
+      <div class="card-img-container">
+        <img [src]="hotel.image || 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600'" [alt]="hotel.nom">
+        <span class="badge" *ngIf="hotel.etoiles">
+          {{ hotel.etoiles }} <i class="fas fa-star"></i>
+        </span>
+        <div class="card-overlay">
+          <span><i class="fas fa-search-plus"></i> Voir les détails</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <h3>{{ hotel.nom }}</h3>
+        <p class="destination"><i class="fas fa-map-marker-alt"></i> {{ hotel.destination }} ({{ hotel.region | titlecase }})</p>
+        <p class="desc">{{ hotel.description }}</p>
+        <div class="prices">
+          <div>
+            <span class="label">Adulte</span>
+            <span *ngIf="isSummerPriceActive(hotel) || hotel.discountPrice_adult" class="old-price">{{ hotel.price_adult }} TND</span>
+            <span class="current-price">{{ getDisplayPrice(hotel, 'adult') }} TND</span>
+            <span class="per-night">/ nuit</span>
+          </div>
+          <div>
+            <span class="label">Enfant</span>
+            <span *ngIf="isSummerPriceActive(hotel) || hotel.discountPrice_kid" class="old-price">{{ hotel.price_kid }} TND</span>
+            <span class="current-price">{{ getDisplayPrice(hotel, 'kid') }} TND</span>
+            <span class="per-night">/ nuit</span>
+          </div>
+        </div>
+        <button class="btn-reserver">Réserver <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MODAL OVERLAY ===== -->
+<div class="modal-overlay" *ngIf="selectedHotel" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <!-- CLOSE BUTTON -->
+    <button class="modal-close" (click)="closeModal()"><i class="fas fa-times"></i></button>
+
+    <!-- ── STEP 1: DETAILS ── -->
+    <div *ngIf="modalStep === 'details'" class="modal-details">
+      <div class="modal-img">
+        <img [src]="selectedHotel.image || 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600'" [alt]="selectedHotel.nom">
+        <div class="modal-img-overlay">
+          <div class="stars">
+            <i class="fas fa-star" *ngFor="let s of getStars(selectedHotel.etoiles || 0)"></i>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h2>{{ selectedHotel.nom }}</h2>
+        <p class="modal-location"><i class="fas fa-map-marker-alt"></i> {{ selectedHotel.destination }} &bull; {{ selectedHotel.region | titlecase }}</p>
+
+        <p class="modal-description">{{ selectedHotel.description || 'Un hôtel de qualité avec tout le confort nécessaire pour un séjour agréable en Tunisie.' }}</p>
+
+        <div class="modal-prices-grid">
+          <div class="price-card">
+            <span class="price-label"><i class="fas fa-user"></i> Adulte</span>
+            <span class="old" *ngIf="isSummerPriceActive(selectedHotel) || selectedHotel.discountPrice_adult">{{ selectedHotel.price_adult }} TND</span>
+            <span class="price-val">{{ getDisplayPrice(selectedHotel, 'adult') }} TND <small>/ nuit</small></span>
+          </div>
+          <div class="price-card">
+            <span class="price-label"><i class="fas fa-child"></i> Enfant</span>
+            <span class="old" *ngIf="isSummerPriceActive(selectedHotel) || selectedHotel.discountPrice_kid">{{ selectedHotel.price_kid }} TND</span>
+            <span class="price-val">{{ getDisplayPrice(selectedHotel, 'kid') }} TND <small>/ nuit</small></span>
+          </div>
+        </div>
+
+        <!-- Summer prices table if exists -->
+        <div class="summer-prices" *ngIf="selectedHotel.summer_prices">
+          <h4><i class="fas fa-sun"></i> Tarifs Été</h4>
+          <table>
+            <thead><tr><th>Mois</th><th>Adulte</th><th>Enfant</th></tr></thead>
+            <tbody>
+              <tr *ngIf="selectedHotel.summer_prices.june?.adult"><td>Juin</td><td>{{ selectedHotel.summer_prices.june.adult }} TND</td><td>{{ selectedHotel.summer_prices.june.kid }} TND</td></tr>
+              <tr *ngIf="selectedHotel.summer_prices.july?.adult"><td>Juillet</td><td>{{ selectedHotel.summer_prices.july.adult }} TND</td><td>{{ selectedHotel.summer_prices.july.kid }} TND</td></tr>
+              <tr *ngIf="selectedHotel.summer_prices.august?.adult"><td>Août</td><td>{{ selectedHotel.summer_prices.august.adult }} TND</td><td>{{ selectedHotel.summer_prices.august.kid }} TND</td></tr>
+              <tr *ngIf="selectedHotel.summer_prices.september?.adult"><td>Septembre</td><td>{{ selectedHotel.summer_prices.september.adult }} TND</td><td>{{ selectedHotel.summer_prices.september.kid }} TND</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button class="btn-primary-modal" (click)="goToBooking()">
+          <i class="fas fa-calendar-check"></i> Réserver maintenant
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: BOOKING ── -->
+    <div *ngIf="modalStep === 'booking'" class="modal-booking">
+      <div class="modal-booking-header">
+        <button class="btn-back" (click)="modalStep = 'details'"><i class="fas fa-arrow-left"></i> Retour</button>
+        <h2><i class="fas fa-calendar-alt"></i> Choisir vos dates</h2>
+        <p>{{ selectedHotel.nom }}</p>
+      </div>
+      <div class="booking-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-calendar-check"></i> Date d'arrivée</label>
+            <input type="date" [(ngModel)]="booking.date_debut" [min]="today" (change)="calculateTotal()">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-calendar-times"></i> Date de départ</label>
+            <input type="date" [(ngModel)]="booking.date_fin" [min]="booking.date_debut || today" (change)="calculateTotal()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Adultes</label>
+            <div class="counter">
+              <button (click)="booking.adultes = booking.adultes > 1 ? booking.adultes - 1 : 1; calculateTotal()">−</button>
+              <span>{{ booking.adultes }}</span>
+              <button (click)="booking.adultes = booking.adultes + 1; calculateTotal()">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-child"></i> Enfants</label>
+            <div class="counter">
+              <button (click)="booking.enfants = booking.enfants > 0 ? booking.enfants - 1 : 0; calculateTotal()">−</button>
+              <span>{{ booking.enfants }}</span>
+              <button (click)="booking.enfants = booking.enfants + 1; calculateTotal()">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-info-simple">
+          <div class="info-row">
+            <span><i class="fas fa-user"></i> Adulte:</span>
+            <strong>À partir de {{ getDisplayPrice(selectedHotel, 'adult') }} DT/p</strong>
+          </div>
+          <div class="info-row">
+            <span><i class="fas fa-child"></i> Enfant:</span>
+            <strong>À partir de {{ getDisplayPrice(selectedHotel, 'kid') }} DT/p</strong>
+          </div>
+          <p class="price-note">* Les tarifs définitifs vous seront communiqués lors du rappel par notre agence.</p>
+        </div>
+
+        <button class="btn-primary-modal" (click)="goToContact()" [disabled]="!canProceedToContact()">
+          <i class="fas fa-user-edit"></i> Remplir mes coordonnées
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: CONTACT FORM ── -->
+    <div *ngIf="modalStep === 'contact'" class="modal-contact">
+      <div class="modal-booking-header">
+        <button class="btn-back" (click)="modalStep = 'booking'"><i class="fas fa-arrow-left"></i> Retour</button>
+        <h2><i class="fas fa-user-edit"></i> Vos coordonnées</h2>
+        <p>Demande de devis pour {{ selectedHotel.nom }}</p>
+      </div>
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="contact.nom" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" [(ngModel)]="contact.prenom" placeholder="Votre prénom" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Portable</label>
+            <input type="tel" [(ngModel)]="contact.portable" placeholder="+216 XX XXX XXX" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email (Optionnel)</label>
+            <input type="email" [(ngModel)]="contact.email" placeholder="votre@email.com">
+          </div>
+        </div>
+        <button class="btn-primary-modal" (click)="submitReservation()"
+          [disabled]="submitting || !contact.nom || !contact.prenom || !contact.portable || !contact.email">
+          <span *ngIf="!submitting"><i class="fas fa-check-circle"></i> Confirmer la réservation</span>
+          <span *ngIf="submitting"><i class="fas fa-spinner fa-spin"></i> Envoi en cours...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: SUCCESS ── -->
+    <div *ngIf="modalStep === 'success'" class="modal-success">
+      <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+      <h2>Réservation envoyée !</h2>
+      <p>Merci <strong>{{ contact.prenom }} {{ contact.nom }}</strong>, votre demande de réservation pour <strong>{{ selectedHotel.nom }}</strong> a bien été reçue.</p>
+      <p class="success-sub">Notre équipe vous contactera très prochainement au <strong>{{ contact.portable }}</strong>.</p>
+      <button class="btn-primary-modal" (click)="closeModal()">Retour aux hôtels</button>
+    </div>
+
+  </div>
+</div>

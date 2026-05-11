@@ -1,0 +1,140 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+
+@Component({
+  selector: 'app-voyages',
+  templateUrl: './voyages.component.html',
+  styleUrls: ['./voyages.component.scss']
+})
+export class VoyagesComponent implements OnInit {
+  voyages: any[] = [];
+  allVoyages: any[] = [];
+  uniqueDestinations: string[] = [];
+  cityFilter: string | null = null;
+  sortOption: string = 'recommandation';
+
+  // Modal logic
+  selectedVoyage: any = null;
+  modalStep: 'details' | 'vols' | 'contact' | 'success' = 'details';
+  volsAvailable: any[] = [];
+  selectedVol: any = null;
+  selectedCompagnie: any = null;
+
+  // Contact form
+  contact = { nom: '', prenom: '', portable: '', email: '' };
+  submitting = false;
+
+  // Destination metadata (images for the destination selection view)
+  destImages: { [key: string]: string } = {
+    'istanbul': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600',
+    'dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600',
+    'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600',
+    'sharm-el-sheikh': 'https://images.unsplash.com/photo-1510011560141-62c7e8fc7908?w=600',
+    'cairo': 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=600',
+    'rome': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600',
+    'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600',
+    'phuket': 'https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=600',
+    'bali': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600'
+  };
+
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.cityFilter = params['city'] || null;
+      this.fetchVoyages();
+    });
+  }
+
+  fetchVoyages() {
+    this.http.get<any[]>('http://localhost:3000/api/voyages?all=true').subscribe({
+      next: (data) => {
+        this.allVoyages = data;
+        this.uniqueDestinations = [...new Set(data.map(v => v.destination.toLowerCase()))];
+        this.filterAndSort();
+      },
+      error: (err) => console.error('Error fetching voyages:', err)
+    });
+  }
+
+  filterAndSort() {
+    if (this.cityFilter) {
+      this.voyages = this.allVoyages.filter(v => v.destination.toLowerCase() === this.cityFilter?.toLowerCase());
+    } else {
+      this.voyages = []; // Show nothing or everything? Prompt says "just show big destinations instead"
+    }
+    this.applySort();
+  }
+
+  selectDestination(dest: string) {
+    this.router.navigate(['/voyages'], { queryParams: { city: dest } });
+  }
+
+  onSortChange() {
+    this.applySort();
+  }
+
+  applySort() {
+    if (this.sortOption === 'price_asc') {
+      this.voyages.sort((a, b) => (a.discountPrice_adult || a.price_adult) - (b.discountPrice_adult || b.price_adult));
+    } else if (this.sortOption === 'price_desc') {
+      this.voyages.sort((a, b) => (b.discountPrice_adult || b.price_adult) - (a.discountPrice_adult || a.price_adult));
+    } else if (this.sortOption === 'duration') {
+      this.voyages.sort((a, b) => b.duree - a.duree);
+    }
+  }
+
+  openModal(voyage: any) {
+    this.selectedVoyage = voyage;
+    this.modalStep = 'details';
+    this.volsAvailable = [];
+    this.selectedVol = null;
+    this.selectedCompagnie = null;
+    this.contact = { nom: '', prenom: '', portable: '', email: '' };
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal() {
+    this.selectedVoyage = null;
+    document.body.style.overflow = '';
+  }
+
+  goToVols() {
+    this.modalStep = 'vols';
+    const dest = this.selectedVoyage.destination;
+    this.http.get<any[]>(`http://localhost:3000/api/vols?destination=${dest}`).subscribe({
+      next: (data) => this.volsAvailable = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  selectCompagnie(vol: any, compagnie: any) {
+    this.selectedVol = vol;
+    this.selectedCompagnie = compagnie;
+  }
+
+  goToContact() {
+    this.modalStep = 'contact';
+  }
+
+  submitDevis() {
+    this.submitting = true;
+    const payload = {
+      type: 'vol',
+      reference_id: this.selectedVoyage._id,
+      reference_nom: this.selectedVoyage.titre,
+      nom: this.contact.nom,
+      prenom: this.contact.prenom,
+      portable: this.contact.portable,
+      email: this.contact.email,
+      compagnie: this.selectedCompagnie ? this.selectedCompagnie.nom : 'Non spécifié',
+      classe: this.selectedCompagnie ? this.selectedCompagnie.classe : 'Non spécifié',
+      prix_total: this.selectedCompagnie ? this.selectedCompagnie.prix_adulte : 0
+    };
+    this.http.post('http://localhost:3000/api/reservations', payload).subscribe({
+      next: () => { this.modalStep = 'success'; this.submitting = false; },
+      error: (err) => { console.error(err); this.submitting = false; }
+    });
+  }
+}

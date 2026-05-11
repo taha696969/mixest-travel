@@ -1,0 +1,152 @@
+<!-- Hero Section -->
+<header class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <div class="hero-text">
+      <h1>Découvrez la Tunisie</h1>
+      <p>Séjours inoubliables et voyages sur mesure avec <strong>Mixest Travel</strong>.</p>
+    </div>
+    
+    <!-- Search Overlay Container -->
+    <div class="search-container">
+      <div class="search-tabs">
+        <button class="tab-btn" [class.active]="searchType === 'hotel'" (click)="setSearchType('hotel')">
+          <i class="fas fa-hotel"></i> Hôtel en Tunisie
+        </button>
+        <button class="tab-btn" [class.active]="searchType === 'voyage'" (click)="setSearchType('voyage')">
+          <i class="fas fa-plane"></i> Voyage Organisé
+        </button>
+        <button class="tab-btn" [class.active]="searchType === 'bus'" (click)="setSearchType('bus')">
+          <i class="fas fa-bus"></i> Option du Bus
+        </button>
+      </div>
+
+      <div class="search-card">
+        <form class="search-form" (ngSubmit)="onSearch()">
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Destination</label>
+            <select class="form-control" name="destination" [(ngModel)]="searchData.destination">
+              <option value="" disabled selected>Où voulez-vous aller ?</option>
+              <option value="sousse">Sousse</option>
+              <option value="hammamet">Hammamet</option>
+              <option value="djerba">Djerba</option>
+              <option value="tunis">Tunis</option>
+              <option value="istanbul">Istanbul</option>
+              <option value="paris">Paris</option>
+              <option value="dubai">Dubaï</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="far fa-calendar-alt"></i> Mois</label>
+            <select class="form-control" name="month" [(ngModel)]="searchData.month">
+              <option value="" disabled selected>Choisir un mois</option>
+              <option value="juin">Juin</option>
+              <option value="juillet">Juillet</option>
+              <option value="aout">Août</option>
+              <option value="septembre">Septembre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-user-friends"></i> Personnes</label>
+            <input type="number" class="form-control" name="people" min="1" [(ngModel)]="searchData.people" placeholder="Nombre">
+          </div>
+          <button type="submit" class="btn-primary search-btn">
+            <i class="fas fa-search"></i> Rechercher
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Voyages Slider Section -->
+<section class="slider-section container">
+  <div class="section-header">
+    <div class="header-left">
+      <h2>Nos Meilleurs Voyages</h2>
+      <p>Explorez nos circuits les plus populaires.</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-scroll" (click)="scroll('voyage-track', -1)"><i class="fas fa-chevron-left"></i></button>
+      <button class="btn-scroll" (click)="scroll('voyage-track', 1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+  
+  <div class="slider-wrapper">
+    <div class="slider-track" id="voyage-track">
+      <div class="slide-item" *ngFor="let voyage of voyages" (click)="goToVoyage(voyage.destination)">
+        <div class="compact-card">
+          <div class="card-img">
+            <img [src]="voyage.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=400'" [alt]="voyage.titre">
+            <span class="card-badge">{{ voyage.type }}</span>
+          </div>
+          <div class="card-body">
+            <h3>{{ voyage.titre }}</h3>
+            <p class="loc"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</p>
+            <div class="card-meta">
+              <span><i class="far fa-clock"></i> {{ voyage.duree }}j</span>
+              <span class="price"><b>{{ voyage.price_adult }}</b> TND</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="voyages.length === 0" class="no-slides">Aucun voyage disponible.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Hotels Slider Section -->
+<section class="slider-section container bg-soft">
+  <div class="section-header">
+    <div class="header-left">
+      <h2>Nos Meilleurs Hôtels</h2>
+      <p>Sélection de nos établissements premium.</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-scroll" (click)="scroll('hotel-track', -1)"><i class="fas fa-chevron-left"></i></button>
+      <button class="btn-scroll" (click)="scroll('hotel-track', 1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+  
+  <div class="slider-wrapper">
+    <div class="slider-track" id="hotel-track">
+      <div class="slide-item" *ngFor="let hotel of hotels" (click)="goToHotel(hotel.destination)">
+        <div class="compact-card">
+          <div class="card-img">
+            <img [src]="hotel.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'" [alt]="hotel.nom">
+            <div class="stars">
+              <i class="fas fa-star" *ngFor="let s of [].constructor(hotel.etoiles)"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>{{ hotel.nom }}</h3>
+            <p class="loc"><i class="fas fa-map-marker-alt"></i> {{ hotel.destination }}</p>
+            <div class="card-meta">
+              <span class="price">À partir de <b>{{ hotel.price_adult }}</b> TND</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="hotels.length === 0" class="no-slides">Aucun hôtel disponible.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Bus Section -->
+<section class="bus-promo container">
+  <div class="bus-box">
+    <div class="bus-info">
+      <h2>Option du Bus</h2>
+      <p>Service de transport premium à travers toute la Tunisie.</p>
+      <ul class="features">
+        <li><i class="fas fa-wifi"></i> Wifi Gratuit</li>
+        <li><i class="fas fa-snowflake"></i> Climatisation</li>
+        <li><i class="fas fa-couch"></i> Confort Max</li>
+      </ul>
+      <button class="btn-primary" routerLink="/bus">Découvrir <i class="fas fa-bus"></i></button>
+    </div>
+    <div class="bus-visual">
+      <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800" alt="Bus">
+    </div>
+  </div>
+</section>

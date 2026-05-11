@@ -1,0 +1,25 @@
+const mongoose = require('mongoose');
+
+const voyageSchema = new mongoose.Schema(
+  {
+    titre: { type: String, required: true },
+    destination: { type: String, required: true },
+    duree: { type: Number, required: true }, // in days
+    price_adult: { type: Number, required: true },
+    price_kid: { type: Number, required: true },
+    discountPrice_adult: { type: Number },
+    discountPrice_kid: { type: Number },
+    stopPoints: [{ type: String }],
+    image: { type: String },
+    description: { type: String },
+    type: {
+      type: String,
+      enum: ['circuit', 'aventure', 'sejour', 'culturel'],
+      default: 'circuit',
+    },
+    disponible: { type: Boolean, default: true },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Voyage', voyageSchema);

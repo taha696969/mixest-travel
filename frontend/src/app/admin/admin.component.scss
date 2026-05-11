@@ -1,0 +1,239 @@
+.admin-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  h1 { color: var(--primary); }
+  .btn-logout {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  
+  button {
+    padding: 12px 25px;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    
+    &.active {
+      color: var(--primary);
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--secondary);
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .btn-res-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    .badge-count {
+      background: #e63946;
+      color: white;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.admin-form {
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  input, select, textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .month-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    .month-group {
+      h4 { margin-bottom: 10px; font-size: 0.9rem; color: #777; }
+      input { width: 100%; margin-bottom: 5px; padding: 8px; font-size: 0.9rem; }
+    }
+  }
+
+  .compagnies-manager {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+    
+    .compagnie-edit-card {
+      background: #fdfdfd;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .btn-delete-small {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+    }
+
+    .btn-add-comp { 
+      margin-top: 10px; 
+      background: #f0fdf4; 
+      color: #16a34a; 
+      border: 1px dashed #16a34a; 
+      padding: 10px; 
+      width: 100%; 
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+  }
+
+  .btn-primary { background: var(--primary); color: white; padding: 15px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+  .btn-secondary { background: #eee; color: #333; padding: 15px; border: none; border-radius: 6px; margin-top: 10px; cursor: pointer; }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f4f4f4; color: var(--primary); font-weight: 700; }
+  .btn-edit { background: #3a86ff; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+  .btn-delete { background: #e63946; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
+}
+
+/* RESERVATIONS STYLES */
+.res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.res-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-left: 8px solid #ccc;
+  overflow: hidden;
+  
+  &.en_attente { border-left-color: #fca311; }
+  &.confirmee { border-left-color: #2a9d8f; }
+  &.annulee { border-left-color: #e63946; }
+
+  .res-header {
+    padding: 15px 20px;
+    background: #fcfcfc;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .res-type {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      &.hotel { background: #e0f2fe; color: #0369a1; }
+      &.vol { background: #fef3c7; color: #92400e; }
+    }
+    
+    .res-date { font-size: 0.85rem; color: #888; }
+    
+    .res-status-actions {
+      display: flex;
+      gap: 10px;
+      select { padding: 5px; font-size: 0.85rem; border-radius: 4px; }
+      .btn-delete-small { background: none; border: none; color: #ccc; cursor: pointer; &:hover{color:#e63946;} }
+    }
+  }
+
+  .res-body {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    
+    h3 { margin-bottom: 10px; color: var(--primary); i { color: var(--secondary); } }
+    p { margin-bottom: 5px; color: #555; i { width: 20px; color: #aaa; } }
+    
+    .booking-details {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      .total-price { 
+        margin-top: 10px; 
+        font-weight: 700; 
+        color: var(--secondary); 
+        font-size: 1.2rem;
+        border-top: 1px dashed #ccc;
+        padding-top: 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .res-body { grid-template-columns: 1fr; }
+  .admin-form .form-row, .compagnies-manager .compagnie-row { grid-template-columns: 1fr; }
+}
