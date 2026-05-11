@@ -37,7 +37,7 @@ export class HotelsComponent implements OnInit {
   }
 
   fetchHotels() {
-    let url = 'http://localhost:3000/api/hotels';
+    let url = '/api/hotels';
     const params: string[] = [];
     if (this.cityFilter) params.push(`destination=${this.cityFilter}`);
     if (params.length > 0) url += `?${params.join('&')}`;
@@ -119,7 +119,7 @@ export class HotelsComponent implements OnInit {
       enfants: this.booking.enfants,
       prix_total: this.totalPrice
     };
-    this.http.post('http://localhost:3000/api/reservations', payload).subscribe({
+    this.http.post('/api/reservations', payload).subscribe({
       next: () => { this.modalStep = 'success'; this.submitting = false; },
       error: (err) => { console.error(err); this.submitting = false; }
     });

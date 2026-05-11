@@ -21,13 +21,13 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     // Fetch all voyages for home page slider
-    this.http.get<any[]>('http://localhost:3000/api/voyages').subscribe({
+    this.http.get<any[]>('/api/voyages').subscribe({
       next: (data) => this.voyages = data,
       error: (err) => console.error('Error fetching voyages:', err)
     });
 
     // Fetch all hotels for home page slider
-    this.http.get<any[]>('http://localhost:3000/api/hotels').subscribe({
+    this.http.get<any[]>('/api/hotels').subscribe({
       next: (data) => this.hotels = data,
       error: (err) => console.error('Error fetching hotels:', err)
     });

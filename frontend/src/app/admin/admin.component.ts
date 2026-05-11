@@ -78,7 +78,7 @@ export class AdminComponent implements OnInit {
 
   fetchData(type: string) {
     const allParam = type === 'reservations' ? '' : '?all=true';
-    this.http.get<any[]>(`http://localhost:3000/api/${type}${allParam}`).subscribe({
+    this.http.get<any[]>(`/api/${type}${allParam}`).subscribe({
       next: (data) => {
         if (type === 'hotels') this.hotels = data;
         if (type === 'voyages') this.voyages = data;
@@ -108,7 +108,7 @@ export class AdminComponent implements OnInit {
 
   deleteItem(id: string) {
     if(confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-      this.http.delete(`http://localhost:3000/api/${this.currentTab}/${id}`).subscribe({
+      this.http.delete(`/api/${this.currentTab}/${id}`).subscribe({
         next: () => this.fetchData(this.currentTab),
         error: (err) => console.error(err)
       });
@@ -117,8 +117,8 @@ export class AdminComponent implements OnInit {
 
   saveHotel() {
     const action = this.isEditing 
-      ? this.http.put(`http://localhost:3000/api/hotels/${this.hotelForm._id}`, this.hotelForm)
-      : this.http.post('http://localhost:3000/api/hotels', this.hotelForm);
+      ? this.http.put(`/api/hotels/${this.hotelForm._id}`, this.hotelForm)
+      : this.http.post('/api/hotels', this.hotelForm);
 
     action.subscribe({
       next: () => { this.fetchData('hotels'); this.resetForm(); },
@@ -131,8 +131,8 @@ export class AdminComponent implements OnInit {
       ? this.voyageForm.stopPointsInput.split(',').map((s: string) => s.trim())
       : [];
     const action = this.isEditing
-      ? this.http.put(`http://localhost:3000/api/voyages/${this.voyageForm._id}`, this.voyageForm)
-      : this.http.post('http://localhost:3000/api/voyages', this.voyageForm);
+      ? this.http.put(`/api/voyages/${this.voyageForm._id}`, this.voyageForm)
+      : this.http.post('/api/voyages', this.voyageForm);
 
     action.subscribe({
       next: () => { this.fetchData('voyages'); this.resetForm(); },
@@ -142,8 +142,8 @@ export class AdminComponent implements OnInit {
 
   saveBus() {
     const action = this.isEditing
-      ? this.http.put(`http://localhost:3000/api/bus/${this.busForm._id}`, this.busForm)
-      : this.http.post('http://localhost:3000/api/bus', this.busForm);
+      ? this.http.put(`/api/bus/${this.busForm._id}`, this.busForm)
+      : this.http.post('/api/bus', this.busForm);
 
     action.subscribe({
       next: () => { this.fetchData('bus'); this.resetForm(); },
@@ -153,8 +153,8 @@ export class AdminComponent implements OnInit {
 
   saveVol() {
     const action = this.isEditing
-      ? this.http.put(`http://localhost:3000/api/vols/${this.volForm._id}`, this.volForm)
-      : this.http.post('http://localhost:3000/api/vols', this.volForm);
+      ? this.http.put(`/api/vols/${this.volForm._id}`, this.volForm)
+      : this.http.post('/api/vols', this.volForm);
 
     action.subscribe({
       next: () => { this.fetchData('vols'); this.resetForm(); },
@@ -181,7 +181,7 @@ export class AdminComponent implements OnInit {
   }
 
   updateReservationStatus(res: any, status: string) {
-    this.http.put(`http://localhost:3000/api/reservations/${res._id}`, { statut: status }).subscribe({
+    this.http.put(`/api/reservations/${res._id}`, { statut: status }).subscribe({
       next: () => this.fetchData('reservations'),
       error: (err) => console.error(err)
     });

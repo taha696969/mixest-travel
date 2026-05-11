@@ -14,7 +14,7 @@ RUN npm install --production
 COPY backend/ ./
 
 # Copy built frontend to backend public folder
-COPY --from=build-frontend /app/frontend/dist /app/public
+COPY --from=build-frontend /app/frontend/dist/frontend /app/public
 
 # Environment variables
 ENV PORT=3000

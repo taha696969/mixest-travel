@@ -48,7 +48,7 @@ export class VoyagesComponent implements OnInit {
   }
 
   fetchVoyages() {
-    this.http.get<any[]>('http://localhost:3000/api/voyages?all=true').subscribe({
+    this.http.get<any[]>('/api/voyages?all=true').subscribe({
       next: (data) => {
         this.allVoyages = data;
         this.uniqueDestinations = [...new Set(data.map(v => v.destination.toLowerCase()))];
@@ -103,7 +103,7 @@ export class VoyagesComponent implements OnInit {
   goToVols() {
     this.modalStep = 'vols';
     const dest = this.selectedVoyage.destination;
-    this.http.get<any[]>(`http://localhost:3000/api/vols?destination=${dest}`).subscribe({
+    this.http.get<any[]>(`/api/vols?destination=${dest}`).subscribe({
       next: (data) => this.volsAvailable = data,
       error: (err) => console.error(err)
     });
@@ -132,7 +132,7 @@ export class VoyagesComponent implements OnInit {
       classe: this.selectedCompagnie ? this.selectedCompagnie.classe : 'Non spécifié',
       prix_total: this.selectedCompagnie ? this.selectedCompagnie.prix_adulte : 0
     };
-    this.http.post('http://localhost:3000/api/reservations', payload).subscribe({
+    this.http.post('/api/reservations', payload).subscribe({
       next: () => { this.modalStep = 'success'; this.submitting = false; },
       error: (err) => { console.error(err); this.submitting = false; }
     });

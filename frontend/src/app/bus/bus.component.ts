@@ -16,7 +16,7 @@ export class BusComponent implements OnInit {
   }
 
   fetchBuses() {
-    this.http.get<any[]>('http://localhost:3000/api/bus').subscribe({
+    this.http.get<any[]>('/api/bus').subscribe({
       next: (data) => this.buses = data,
       error: (err) => console.error('Error fetching buses:', err)
     });
