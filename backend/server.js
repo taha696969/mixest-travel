@@ -6,10 +6,12 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:4200' }));
+const path = require('path');
+
+app.use(cors()); // Enable CORS for all during transition
 app.use(express.json());
 
-// Routes
+// API Routes
 const hotelRoutes = require('./routes/hotels');
 const voyageRoutes = require('./routes/voyages');
 const busRoutes = require('./routes/bus');
@@ -25,6 +27,14 @@ app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/vols', volRoutes);
 app.use('/api/reservations', reservationRoutes);
+
+// Serve Static Files (Angular)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Wildcard route for Angular SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // MongoDB connection
 mongoose
