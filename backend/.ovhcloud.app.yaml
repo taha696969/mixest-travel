@@ -1,0 +1,10 @@
+name: backend
+type: 'nodejs:18' # Or use generic 'custom' to execute your Dockerfile directly
+
+# Pass your MongoDB Atlas credentials securely
+env:
+  MONGODB_URI: "mongodb+srv://taha:nadia201@mixesttravel.1tlvnce.mongodb.net/tunisie_travel?retryWrites=true&w=majority&appName=mixesttravel"
+
+web:
+  commands:
+    start: "npm start" # Or the entry command from your Dockerfile

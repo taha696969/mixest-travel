@@ -1,0 +1,12 @@
+name: frontend
+type: 'nginx:alpine' # Tells OVH to host it statically via Nginx
+
+web:
+  locations:
+    '/':
+      root: 'dist/frontend'
+      index: ['index.html']
+      passthrough: true
+    '/api':
+      # Automatically routes frontend API requests to your backend component
+      upstream: 'backend:http' 

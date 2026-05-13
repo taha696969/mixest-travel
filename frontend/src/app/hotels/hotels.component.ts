@@ -12,6 +12,11 @@ export class HotelsComponent implements OnInit {
   cityFilter: string | null = null;
   selectedMonth: string | null = null;
   sortOption: string = 'recommandation';
+  searchData = {
+    destination: '',
+    month: '',
+    people: 1
+  };
 
   // Modal
   selectedHotel: any = null;
@@ -30,10 +35,19 @@ export class HotelsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.cityFilter = params['destination'] || null;
+      this.cityFilter = params['destination'] || params['city'] || null;
       this.selectedMonth = params['month'] || null;
+      this.searchData.destination = this.cityFilter || '';
+      this.searchData.month = this.selectedMonth || '';
+      this.searchData.people = params['people'] ? parseInt(params['people']) : 1;
       this.fetchHotels();
     });
+  }
+
+  onSearch() {
+    this.cityFilter = this.searchData.destination;
+    this.selectedMonth = this.searchData.month;
+    this.fetchHotels();
   }
 
   fetchHotels() {

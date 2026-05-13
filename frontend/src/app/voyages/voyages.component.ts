@@ -13,6 +13,11 @@ export class VoyagesComponent implements OnInit {
   uniqueDestinations: string[] = [];
   cityFilter: string | null = null;
   sortOption: string = 'recommandation';
+  searchData = {
+    destination: '',
+    month: '',
+    people: 1
+  };
 
   // Modal logic
   selectedVoyage: any = null;
@@ -42,9 +47,17 @@ export class VoyagesComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.cityFilter = params['city'] || null;
+      this.cityFilter = params['city'] || params['destination'] || null;
+      this.searchData.destination = this.cityFilter || '';
+      this.searchData.month = params['month'] || '';
+      this.searchData.people = params['people'] ? parseInt(params['people']) : 1;
       this.fetchVoyages();
     });
+  }
+
+  onSearch() {
+    this.cityFilter = this.searchData.destination;
+    this.fetchVoyages();
   }
 
   fetchVoyages() {

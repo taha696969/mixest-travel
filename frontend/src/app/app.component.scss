@@ -21,9 +21,11 @@
   text-decoration: none;
   
   .logo-img {
-    height: 50px;
+    height: 70px;
     width: auto;
     object-fit: contain;
+    transition: var(--transition);
+    &:hover { transform: scale(1.05); }
   }
 
   .brand-text {

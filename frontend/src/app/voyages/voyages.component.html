@@ -1,8 +1,41 @@
-<div class="page-header">
+<div class="listing-hero" style="background-image: url('https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=1600');">
+  <div class="hero-overlay"></div>
   <div class="container">
     <h1>{{ cityFilter ? (cityFilter | titlecase) : 'Destinations de Voyage' }}</h1>
   </div>
 </div>
+
+<div class="listing-search-bar">
+  <div class="container">
+    <form class="simple-search" (ngSubmit)="onSearch()">
+      <div class="input-with-icon">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" name="destination" [(ngModel)]="searchData.destination" placeholder="Destination (Istanbul, Paris...)" list="destinations-v">
+      </div>
+      <div class="input-with-icon">
+        <i class="far fa-calendar-alt"></i>
+        <select name="month" [(ngModel)]="searchData.month">
+          <option value="" selected>Tous les mois</option>
+          <option value="juillet">Juillet</option>
+          <option value="aout">Août</option>
+          <option value="septembre">Septembre</option>
+        </select>
+      </div>
+      <div class="input-with-icon">
+        <i class="fas fa-user-friends"></i>
+        <input type="number" name="people" min="1" [(ngModel)]="searchData.people" placeholder="Personnes">
+      </div>
+      <button type="submit" class="btn-search-simple">Rechercher</button>
+    </form>
+  </div>
+</div>
+
+<datalist id="destinations-v">
+  <option value="Istanbul"></option>
+  <option value="Paris"></option>
+  <option value="Dubaï"></option>
+  <option value="Tozeur"></option>
+</datalist>
 
 <!-- ===== DESTINATION SELECTION VIEW (When no cityFilter) ===== -->
 <section class="destinations-section container" *ngIf="!cityFilter">
