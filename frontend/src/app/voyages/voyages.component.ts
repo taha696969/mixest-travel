@@ -51,12 +51,14 @@ export class VoyagesComponent implements OnInit {
     'bali': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600'
   };
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+  uniqueCountries: any[] = [];
+  countryFilter: string | null = null;
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.cityFilter = params['city'] || params['destination'] || null;
-      this.searchData.destination = this.cityFilter || '';
+      this.countryFilter = params['pays'] || params['country'] || null;
+      this.searchData.destination = this.cityFilter || this.countryFilter || '';
       this.searchData.month = params['month'] || '';
       this.searchData.people = params['people'] ? parseInt(params['people']) : 1;
       this.fetchVoyages();
@@ -65,6 +67,7 @@ export class VoyagesComponent implements OnInit {
 
   onSearch() {
     this.cityFilter = this.searchData.destination;
+    this.countryFilter = null; // Search defaults to city/destination
     this.fetchVoyages();
   }
 
@@ -73,6 +76,19 @@ export class VoyagesComponent implements OnInit {
       next: (data) => {
         this.allVoyages = data;
         this.uniqueDestinations = [...new Set(data.map(v => v.destination.toLowerCase()))];
+        
+        // Group by country for the "Initial" view
+        const countryMap = new Map();
+        data.forEach(v => {
+          if (!countryMap.has(v.pays.toLowerCase())) {
+            countryMap.set(v.pays.toLowerCase(), {
+              name: v.pays,
+              image: v.image // use first voyage image as country cover
+            });
+          }
+        });
+        this.uniqueCountries = Array.from(countryMap.values());
+        
         this.filterAndSort();
       },
       error: (err) => console.error('Error fetching voyages:', err)
@@ -82,10 +98,16 @@ export class VoyagesComponent implements OnInit {
   filterAndSort() {
     if (this.cityFilter) {
       this.voyages = this.allVoyages.filter(v => v.destination.toLowerCase() === this.cityFilter?.toLowerCase());
+    } else if (this.countryFilter) {
+      this.voyages = this.allVoyages.filter(v => v.pays.toLowerCase() === this.countryFilter?.toLowerCase());
     } else {
-      this.voyages = []; // Show nothing or everything? Prompt says "just show big destinations instead"
+      this.voyages = []; 
     }
     this.applySort();
+  }
+
+  selectCountry(country: string) {
+    this.router.navigate(['/voyages'], { queryParams: { pays: country } });
   }
 
   selectDestination(dest: string) {

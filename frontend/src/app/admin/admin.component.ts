@@ -90,7 +90,7 @@ export class AdminComponent implements OnInit {
   }
 
   initVoyageForm() {
-    return { disponible: true, stopPointsInput: '', stopPoints: [] };
+    return { disponible: true, stopPointsInput: '', stopPoints: [], pays: '' };
   }
 
   initBusForm() {

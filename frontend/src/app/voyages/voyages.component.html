@@ -62,32 +62,37 @@
   <option value="Tozeur"></option>
 </datalist>
 
-<!-- ===== DESTINATION SELECTION VIEW (When no cityFilter) ===== -->
-<section class="destinations-section container" *ngIf="!cityFilter">
+<!-- ===== DESTINATION SELECTION VIEW (When no filters) ===== -->
+<section class="destinations-section container" *ngIf="!cityFilter && !countryFilter">
+  <div class="section-header">
+    <h2>Nos Destinations</h2>
+    <p>Choisissez un pays pour découvrir nos voyages organisés</p>
+  </div>
   <div class="dest-grid">
-    <div class="dest-card" *ngFor="let dest of uniqueDestinations" (click)="selectDestination(dest)">
+    <div class="dest-card" *ngFor="let country of uniqueCountries" (click)="selectCountry(country.name)">
       <div class="dest-img-container">
-        <img [src]="destImages[dest] || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="dest">
+        <img [src]="country.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="country.name">
         <div class="dest-overlay">
-          <h3>{{ dest | titlecase }}</h3>
-          <span class="btn-discover">Voir les voyages <i class="fas fa-chevron-right"></i></span>
+          <h3>{{ country.name }}</h3>
+          <span class="btn-discover">Explorer les voyages <i class="fas fa-chevron-right"></i></span>
         </div>
       </div>
     </div>
   </div>
-  <div *ngIf="uniqueDestinations.length === 0" class="no-data">
+  <div *ngIf="uniqueCountries.length === 0" class="no-data">
     <i class="fas fa-globe-africa"></i>
     <p>Aucune destination n'est disponible pour le moment.</p>
   </div>
 </section>
 
-<!-- ===== VOYAGES LIST VIEW (When cityFilter is present) ===== -->
-<div *ngIf="cityFilter">
+<!-- ===== VOYAGES LIST VIEW (When filter is present) ===== -->
+<div *ngIf="cityFilter || countryFilter">
+
   <!-- ===== SORT BAR ===== -->
   <div class="container sort-bar">
     <div class="sort-content">
       <div class="sort-left">
-        <button class="btn-back-main" (click)="selectDestination('')"><i class="fas fa-arrow-left"></i> Toutes les destinations</button>
+        <button class="btn-back-main" (click)="countryFilter = null; cityFilter = null; fetchVoyages()"><i class="fas fa-arrow-left"></i> Toutes les destinations</button>
         <span class="results-count"><strong>{{ voyages.length }}</strong> Voyages trouvés</span>
       </div>
       <div class="sort-select">

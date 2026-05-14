@@ -13,33 +13,18 @@
     <ul class="nav-links" [class.open]="isMenuOpen">
       <li class="dropdown">
         <a routerLink="/hotels">Hotel en Tunisie <i class="fas fa-chevron-down"></i></a>
-        <div class="dropdown-menu mega-menu">
-          <div class="mega-column">
-            <h4>Sahel</h4>
-            <a routerLink="/hotels" [queryParams]="{city: 'sousse'}">Sousse</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'monastir'}">Monastir</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'mahdia'}">Mahdia</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'port-el-kantaoui'}">Port El Kantaoui</a>
-          </div>
-          <div class="mega-column">
-            <h4>Cap Bon</h4>
-            <a routerLink="/hotels" [queryParams]="{city: 'hammamet'}">Hammamet</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'nabeul'}">Nabeul</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'kelibia'}">Kélibia</a>
-          </div>
-          <div class="mega-column">
-            <h4>Sud & Îles</h4>
-            <a routerLink="/hotels" [queryParams]="{city: 'djerba'}">Djerba</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'zarzis'}">Zarzis</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'tozeur'}">Tozeur</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'douz'}">Douz</a>
-          </div>
-          <div class="mega-column">
+        <div class="dropdown-menu mega-menu" *ngIf="navData.hotelsByRegion">
+          <div class="mega-column" *ngIf="navData.hotelsByRegion.nord">
             <h4>Nord</h4>
-            <a routerLink="/hotels" [queryParams]="{city: 'tunis'}">Tunis / Gammarth</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'tabarka'}">Tabarka</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'ain-drahem'}">Aïn Draham</a>
-            <a routerLink="/hotels" [queryParams]="{city: 'bizerte'}">Bizerte</a>
+            <a *ngFor="let city of navData.hotelsByRegion.nord" routerLink="/hotels" [queryParams]="{city: city}">{{ city | titlecase }}</a>
+          </div>
+          <div class="mega-column" *ngIf="navData.hotelsByRegion.centre">
+            <h4>Centre</h4>
+            <a *ngFor="let city of navData.hotelsByRegion.centre" routerLink="/hotels" [queryParams]="{city: city}">{{ city | titlecase }}</a>
+          </div>
+          <div class="mega-column" *ngIf="navData.hotelsByRegion.sud">
+            <h4>Sud & Îles</h4>
+            <a *ngFor="let city of navData.hotelsByRegion.sud" routerLink="/hotels" [queryParams]="{city: city}">{{ city | titlecase }}</a>
           </div>
         </div>
       </li>
@@ -47,24 +32,8 @@
         <a routerLink="/voyages">Voyage organise <i class="fas fa-chevron-down"></i></a>
         <div class="dropdown-menu mega-menu">
           <div class="mega-column">
-            <h4>Proche-Orient</h4>
-            <a routerLink="/voyages" [queryParams]="{city: 'istanbul'}">Istanbul</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'dubai'}">Dubaï</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'sharm-el-sheikh'}">Sharm El Sheikh</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'cairo'}">Le Caire</a>
-          </div>
-          <div class="mega-column">
-            <h4>Europe</h4>
-            <a routerLink="/voyages" [queryParams]="{city: 'paris'}">Paris</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'rome'}">Rome</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'barcelona'}">Barcelone</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'madrid'}">Madrid</a>
-          </div>
-          <div class="mega-column">
-            <h4>Asie & Exotique</h4>
-            <a routerLink="/voyages" [queryParams]="{city: 'phuket'}">Phuket</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'bali'}">Bali</a>
-            <a routerLink="/voyages" [queryParams]="{city: 'maldives'}">Maldives</a>
+            <h4>Destinations</h4>
+            <a *ngFor="let country of navData.voyageCountries" routerLink="/voyages" [queryParams]="{pays: country}">{{ country | titlecase }}</a>
           </div>
         </div>
       </li>

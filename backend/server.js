@@ -56,6 +56,33 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+// ── Navigation endpoint to show only what's present ──
+app.get('/api/navigation', async (req, res) => {
+  try {
+    const Hotel = require('./models/Hotel');
+    const Voyage = require('./models/Voyage');
+    
+    const [hotelCities, voyageCountries] = await Promise.all([
+      Hotel.distinct('destination', { disponible: true }),
+      Voyage.distinct('pays', { disponible: true })
+    ]);
+
+    // Group hotel cities by region for the mega menu
+    const hotelsByRegion = await Hotel.aggregate([
+      { $match: { disponible: true } },
+      { $group: { _id: "$region", cities: { $addToSet: "$destination" } } }
+    ]);
+
+    res.json({ 
+      hotelCities, 
+      voyageCountries,
+      hotelsByRegion: hotelsByRegion.reduce((acc, curr) => ({ ...acc, [curr._id]: curr.cities }), {})
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Serve Static Files (Angular)
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -4,12 +4,13 @@ const Voyage = require('../models/Voyage');
 
 router.get('/', async (req, res) => {
   try {
-    const { type, destination, all } = req.query;
+    const { type, destination, pays, all } = req.query;
     const filter = {};
     if (!all) filter.disponible = true;
     if (type) filter.type = type;
     if (destination) filter.destination = new RegExp(destination, 'i');
-    const voyages = await Voyage.find(filter).sort({ prix: 1 });
+    if (pays) filter.pays = new RegExp(pays, 'i');
+    const voyages = await Voyage.find(filter).sort({ price_adult: 1 });
     res.json(voyages);
   } catch (err) {
     res.status(500).json({ message: err.message });

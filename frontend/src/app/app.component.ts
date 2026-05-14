@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +9,19 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'frontend';
   isMenuOpen: boolean = false;
+  navData: any = {
+    hotelsByRegion: {},
+    voyageCountries: []
+  };
+
+  constructor(private http: HttpClient) {
+    this.fetchNavigation();
+  }
+
+  fetchNavigation() {
+    this.http.get<any>('/api/navigation').subscribe({
+      next: (data) => this.navData = data,
+      error: (err) => console.error('Error fetching navigation:', err)
+    });
+  }
 }

@@ -165,6 +165,7 @@
             <option *ngFor="let c of voyageCities" [value]="c.slug">{{ c.name }}</option>
           </select>
         </div>
+        <div class="fg"><label>Pays</label><input type="text" [(ngModel)]="voyageForm.pays" name="pays" placeholder="Ex: Turquie" required></div>
         <div class="fg"><label>Type</label>
           <select [(ngModel)]="voyageForm.type" name="type">
             <option value="circuit">Circuit</option><option value="aventure">Aventure</option>
