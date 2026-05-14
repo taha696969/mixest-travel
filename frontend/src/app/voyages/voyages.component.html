@@ -212,7 +212,10 @@
           <div class="vol-info">
             <img [src]="vol.image || 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=200'" alt="vol">
             <div>
-              <h3>Vols vers {{ vol.destination }}</h3>
+              <div class="vol-title-row">
+                <h3>Vols vers {{ vol.destination | titlecase }} <span *ngIf="vol.isCombined">+ {{ vol.destination2 | titlecase }}</span></h3>
+                <span class="badge-combined" *ngIf="vol.isCombined"><i class="fas fa-link"></i> COMBINÉ</span>
+              </div>
               <p><i class="fas fa-globe"></i> Pays: {{ vol.pays }}</p>
               <p class="desc-small">{{ vol.description }}</p>
             </div>

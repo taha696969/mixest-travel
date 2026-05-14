@@ -8,7 +8,12 @@ router.get('/', async (req, res) => {
     const { destination, all } = req.query;
     const filter = {};
     if (!all) filter.disponible = true;
-    if (destination) filter.destination = new RegExp(destination, 'i');
+    if (destination) {
+      filter.$or = [
+        { destination: new RegExp(destination, 'i') },
+        { destination2: new RegExp(destination, 'i') }
+      ];
+    }
     const vols = await Vol.find(filter).sort({ destination: 1 });
     res.json(vols);
   } catch (err) {

@@ -258,6 +258,15 @@
           </select>
         </div>
         <div class="fg"><label>Pays</label><input type="text" [(ngModel)]="volForm.pays" name="v_pays" placeholder="Ex: Turquie" required></div>
+        <div class="fg checkbox-fg">
+          <label><input type="checkbox" [(ngModel)]="volForm.isCombined" name="v_is_comb"> Vol Combiné</label>
+        </div>
+        <div class="fg" *ngIf="volForm.isCombined">
+          <label>2ème Destination</label>
+          <select [(ngModel)]="volForm.destination2" name="v_dest2">
+            <option *ngFor="let c of voyageCities" [value]="c.slug">{{ c.name }}</option>
+          </select>
+        </div>
         <div class="fg"><label>Image URL</label><input type="text" [(ngModel)]="volForm.image" name="v_img" placeholder="https://..."></div>
       </div>
       <div class="fg"><label>Description</label><textarea [(ngModel)]="volForm.description" name="v_desc" placeholder="Description courte"></textarea></div>

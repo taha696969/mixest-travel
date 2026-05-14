@@ -98,7 +98,7 @@ export class AdminComponent implements OnInit {
   }
 
   initVolForm() {
-    return { disponible: true, compagnies: [] };
+    return { disponible: true, compagnies: [], isCombined: false, destination2: '' };
   }
 
   initVolCompagnieForm() {

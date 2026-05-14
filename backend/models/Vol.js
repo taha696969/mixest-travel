@@ -19,6 +19,8 @@ const volSchema = new mongoose.Schema(
     pays: { type: String, required: true },          // e.g. "Istanbul, Ankara"
     image: { type: String },
     description: { type: String },
+    isCombined: { type: Boolean, default: false },
+    destination2: { type: String },
     compagnies: [compagnieSchema],
     disponible: { type: Boolean, default: true }
   },
