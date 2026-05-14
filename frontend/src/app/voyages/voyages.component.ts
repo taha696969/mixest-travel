@@ -77,16 +77,19 @@ export class VoyagesComponent implements OnInit {
     this.http.get<any[]>('/api/voyages?all=true').subscribe({
       next: (data) => {
         this.allVoyages = data;
-        this.uniqueDestinations = [...new Set(data.map(v => v.destination.toLowerCase()))];
+        this.uniqueDestinations = [...new Set(data.filter(v => v.destination).map(v => v.destination.toLowerCase()))];
         
         // Group by country for the "Initial" view
         const countryMap = new Map();
         data.forEach(v => {
-          if (!countryMap.has(v.pays.toLowerCase())) {
-            countryMap.set(v.pays.toLowerCase(), {
-              name: v.pays,
-              image: v.image // use first voyage image as country cover
-            });
+          if (v.pays) {
+            const countryKey = v.pays.toLowerCase();
+            if (!countryMap.has(countryKey)) {
+              countryMap.set(countryKey, {
+                name: v.pays,
+                image: v.image // use first voyage image as country cover
+              });
+            }
           }
         });
         this.uniqueCountries = Array.from(countryMap.values());
@@ -99,9 +102,9 @@ export class VoyagesComponent implements OnInit {
 
   filterAndSort() {
     if (this.cityFilter) {
-      this.voyages = this.allVoyages.filter(v => v.destination.toLowerCase() === this.cityFilter?.toLowerCase());
+      this.voyages = this.allVoyages.filter(v => v.destination && v.destination.toLowerCase() === this.cityFilter?.toLowerCase());
     } else if (this.countryFilter) {
-      this.voyages = this.allVoyages.filter(v => v.pays.toLowerCase() === this.countryFilter?.toLowerCase());
+      this.voyages = this.allVoyages.filter(v => v.pays && v.pays.toLowerCase() === this.countryFilter?.toLowerCase());
     } else {
       this.voyages = []; 
     }

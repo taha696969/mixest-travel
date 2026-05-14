@@ -62,10 +62,13 @@ app.get('/api/navigation', async (req, res) => {
     const Hotel = require('./models/Hotel');
     const Voyage = require('./models/Voyage');
     
-    const [hotelCities, voyageCountries] = await Promise.all([
+    let [hotelCities, voyageCountries] = await Promise.all([
       Hotel.distinct('destination', { disponible: true }),
       Voyage.distinct('pays', { disponible: true })
     ]);
+
+    hotelCities = hotelCities.filter(c => c);
+    voyageCountries = voyageCountries.filter(p => p);
 
     // Group hotel cities by region for the mega menu
     const hotelsByRegion = await Hotel.aggregate([
