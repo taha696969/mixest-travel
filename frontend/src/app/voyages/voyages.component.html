@@ -128,7 +128,10 @@
         <div class="card-content">
           <div class="card-header">
             <h3>{{ voyage.titre }}</h3>
-            <p class="destination"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</p>
+            <div class="card-meta-top">
+              <p class="destination"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</p>
+              <p class="dates-meta" *ngIf="voyage.date_debut"><i class="far fa-calendar-alt"></i> {{ voyage.date_debut | date:'dd MMM' }} - {{ voyage.date_fin | date:'dd MMM' }}</p>
+            </div>
           </div>
           <p class="desc">{{ voyage.description }}</p>
           <div class="card-footer">
@@ -253,6 +256,9 @@
               <div class="v-price">
                 <span class="p-label">Par personne</span>
                 <span class="p-val">{{ c.prix_adulte }} TND</span>
+                <span class="p-seats" [class.low-stock]="c.places_dispo < 5">
+                  <i class="fas fa-user-friends"></i> {{ c.places_dispo }} places restantes
+                </span>
               </div>
 
               <!-- Selector -->

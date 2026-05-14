@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://mixest-travel.up.railway.app",
+    "target": "http://localhost:3000",
     "secure": false
   }
 }

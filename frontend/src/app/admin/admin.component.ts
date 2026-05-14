@@ -90,15 +90,19 @@ export class AdminComponent implements OnInit {
   }
 
   initVoyageForm() {
-    return { disponible: true, stopPointsInput: '', stopPoints: [], pays: '' };
+    return { disponible: true, stopPointsInput: '', stopPoints: [], pays: '', date_debut: '', date_fin: '' };
   }
 
   initBusForm() {
-    return { disponible: true };
+    return { disponible: true, stopPointsInput: '', stopPoints: [] };
   }
 
   initVolForm() {
-    return { destination: '', pays: '', description: '', image: '', disponible: true, compagnies: [] };
+    return { disponible: true, compagnies: [] };
+  }
+
+  initVolCompagnieForm() {
+    return { disponible: true, prix_adulte: 0, prix_enfant: 0, places_dispo: 0 };
   }
 
   logout() {

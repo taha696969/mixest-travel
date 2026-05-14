@@ -166,6 +166,8 @@
           </select>
         </div>
         <div class="fg"><label>Pays</label><input type="text" [(ngModel)]="voyageForm.pays" name="pays" placeholder="Ex: Turquie" required></div>
+        <div class="fg"><label>Date Début</label><input type="date" [(ngModel)]="voyageForm.date_debut" name="date_debut"></div>
+        <div class="fg"><label>Date Fin</label><input type="date" [(ngModel)]="voyageForm.date_fin" name="date_fin"></div>
         <div class="fg"><label>Type</label>
           <select [(ngModel)]="voyageForm.type" name="type">
             <option value="circuit">Circuit</option><option value="aventure">Aventure</option>
@@ -191,10 +193,16 @@
       </div>
     </form>
     <table class="admin-table">
-      <thead><tr><th>Titre</th><th>Destination</th><th>Prix Ad.</th><th>Promo</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Titre</th><th>Dates</th><th>Destination</th><th>Prix Ad.</th><th>Promo</th><th>Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let v of voyages" [class.promo-row]="v.discountPrice_adult">
-          <td>{{ v.titre }}</td><td>{{ v.destination }}</td><td>{{ v.price_adult }} TND</td>
+          <td>{{ v.titre }}</td>
+          <td>
+            <div *ngIf="v.date_debut" class="admin-date-badge">{{ v.date_debut | date:'dd/MM' }} - {{ v.date_fin | date:'dd/MM' }}</div>
+            <div *ngIf="!v.date_debut">-</div>
+          </td>
+          <td>{{ v.destination | titlecase }} ({{ v.pays }})</td>
+          <td>{{ v.price_adult }} TND</td>
           <td><span class="promo-badge" *ngIf="v.discountPrice_adult">🔥 PROMO</span></td>
           <td>
             <button class="btn-edit" (click)="editItem(v)">Éditer</button>
@@ -265,13 +273,7 @@
             <div class="fg"><label>Départ</label><input type="text" [(ngModel)]="c.date_depart" [name]="'c_dep_'+i" placeholder="04/11"></div>
             <div class="fg"><label>Arrivée</label><input type="text" [(ngModel)]="c.date_arrivee" [name]="'c_arr_'+i" placeholder="11/11"></div>
             <div class="fg"><label>Durée</label><input type="text" [(ngModel)]="c.duree_texte" [name]="'c_dur_'+i" placeholder="8j/7n"></div>
-            <div class="fg"><label>Classe</label>
-              <select [(ngModel)]="c.classe" [name]="'c_cl_'+i">
-                <option value="Économique">Économique</option>
-                <option value="Business">Business</option>
-                <option value="First">First</option>
-              </select>
-            </div>
+            <div class="fg"><label>Places Dispo</label><input type="number" [(ngModel)]="c.places_dispo" [name]="'c_pl_'+i" placeholder="Nb places"></div>
           </div>
           <div class="form-row">
             <div class="fg"><label>Prix Adulte</label><input type="number" [(ngModel)]="c.prix_adulte" [name]="'c_pa_'+i" required></div>
@@ -290,7 +292,7 @@
       <thead><tr><th>Destination</th><th>Pays</th><th>Compagnies</th><th>Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let v of vols">
-          <td>{{ v.destination }}</td><td>{{ v.pays }}</td><td>{{ v.compagnies?.length || 0 }} compagnies</td>
+          <td>{{ v.destination | titlecase }}</td><td>{{ v.pays }}</td><td>{{ v.compagnies?.length || 0 }} compagnies</td>
           <td>
             <button class="btn-edit" (click)="editItem(v)">Éditer</button>
             <button class="btn-delete" (click)="deleteItem(v._id)">Suppr.</button>

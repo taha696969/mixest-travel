@@ -8,6 +8,7 @@ const compagnieSchema = new mongoose.Schema({
   duree_texte: { type: String }, // New (ex: "8j/7n")
   prix_adulte: { type: Number, required: true },
   prix_enfant: { type: Number, required: true },
+  places_dispo: { type: Number, default: 0 },
   classe: { type: String, default: 'Économique' },
   disponible: { type: Boolean, default: true }
 });

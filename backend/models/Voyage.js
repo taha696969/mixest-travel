@@ -5,6 +5,8 @@ const voyageSchema = new mongoose.Schema(
     titre: { type: String, required: true },
     destination: { type: String, required: true },
     pays: { type: String, required: true },
+    date_debut: { type: Date },
+    date_fin: { type: Date },
     duree: { type: Number, required: true }, // in days
     price_adult: { type: Number, required: true },
     price_kid: { type: Number, required: true },
