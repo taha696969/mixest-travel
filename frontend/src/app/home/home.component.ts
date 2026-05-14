@@ -20,15 +20,15 @@ export class HomeComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    // Fetch all voyages for home page slider
+    // Fetch and filter voyages for home page slider (only show promos)
     this.http.get<any[]>('/api/voyages').subscribe({
-      next: (data) => this.voyages = data,
+      next: (data) => this.voyages = data.filter(v => this.hasPromo(v, 'voyage')),
       error: (err) => console.error('Error fetching voyages:', err)
     });
 
-    // Fetch all hotels for home page slider
+    // Fetch and filter hotels for home page slider (only show promos)
     this.http.get<any[]>('/api/hotels').subscribe({
-      next: (data) => this.hotels = data,
+      next: (data) => this.hotels = data.filter(h => this.hasPromo(h, 'hotel')),
       error: (err) => console.error('Error fetching hotels:', err)
     });
   }
