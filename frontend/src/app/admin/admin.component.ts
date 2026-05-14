@@ -94,7 +94,7 @@ export class AdminComponent implements OnInit {
   }
 
   initBusForm() {
-    return { disponible: true, stopPointsInput: '', stopPoints: [] };
+    return { disponible: true, stopPointsInput: '', stopPoints: [], date: '' };
   }
 
   initVolForm() {

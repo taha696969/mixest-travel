@@ -231,6 +231,7 @@
         <div class="fg"><label>Départ</label><input type="text" [(ngModel)]="busForm.depart" name="depart" placeholder="Tunis" required></div>
         <div class="fg"><label>Arrivée</label><input type="text" [(ngModel)]="busForm.arrivee" name="arrivee" placeholder="Sousse" required></div>
         <div class="fg"><label>Heure</label><input type="text" [(ngModel)]="busForm.heure" name="heure" placeholder="08:00" required></div>
+        <div class="fg"><label>Date</label><input type="date" [(ngModel)]="busForm.date" name="date"></div>
         <div class="fg"><label>Durée</label><input type="text" [(ngModel)]="busForm.duree" name="duree" placeholder="2h30"></div>
       </div>
       <div class="form-row">
@@ -243,10 +244,15 @@
       </div>
     </form>
     <table class="admin-table">
-      <thead><tr><th>Départ</th><th>Arrivée</th><th>Heure</th><th>Prix</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Départ</th><th>Arrivée</th><th>Date/Heure</th><th>Prix</th><th>Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let b of buses">
-          <td>{{ b.depart }}</td><td>{{ b.arrivee }}</td><td>{{ b.heure }}</td><td>{{ b.prix }} TND</td>
+          <td>{{ b.depart }}</td><td>{{ b.arrivee }}</td>
+          <td>
+            <div *ngIf="b.date" class="admin-date-badge">{{ b.date | date:'dd/MM' }} à {{ b.heure }}</div>
+            <div *ngIf="!b.date">{{ b.heure }}</div>
+          </td>
+          <td>{{ b.prix }} TND</td>
           <td>
             <button class="btn-edit" (click)="editItem(b)">Éditer</button>
             <button class="btn-delete" (click)="deleteItem(b._id)">Suppr.</button>

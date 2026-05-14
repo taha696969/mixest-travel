@@ -8,6 +8,7 @@ const busSchema = new mongoose.Schema(
     duree: { type: String },
     prix: { type: Number, required: true },
     discountPrice: { type: Number },
+    date: { type: Date },
     disponible: { type: Boolean, default: true },
   },
   { timestamps: true }

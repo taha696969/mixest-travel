@@ -70,6 +70,9 @@
         </h3>
         
         <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <p class="duration" style="font-size: 1.1rem; margin-bottom: 10px;" *ngIf="bus.date">
+            <i class="far fa-calendar-alt" style="color: var(--primary); width: 25px;"></i> Date: <strong>{{ bus.date | date:'dd MMMM yyyy' }}</strong>
+          </p>
           <p class="duration" style="font-size: 1.1rem; margin-bottom: 10px;">
             <i class="far fa-clock" style="color: var(--primary); width: 25px;"></i> Départ: <strong>{{ bus.heure }}</strong>
           </p>
