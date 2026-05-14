@@ -54,6 +54,8 @@ export class VoyagesComponent implements OnInit {
   uniqueCountries: any[] = [];
   countryFilter: string | null = null;
 
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.cityFilter = params['city'] || params['destination'] || null;
