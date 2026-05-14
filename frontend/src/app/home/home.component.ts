@@ -35,6 +35,9 @@ export class HomeComponent implements OnInit {
 
   setSearchType(type: 'hotel' | 'voyage' | 'bus') {
     this.searchType = type;
+    if (type === 'hotel') this.router.navigate(['/hotels']);
+    if (type === 'voyage') this.router.navigate(['/voyages']);
+    if (type === 'bus') this.router.navigate(['/bus']);
   }
 
   scroll(elementId: string, direction: number) {
@@ -65,5 +68,16 @@ export class HomeComponent implements OnInit {
 
   goToHotel(dest: string) {
     this.router.navigate(['/hotels'], { queryParams: { city: dest } });
+  }
+
+  hasPromo(item: any, type: 'hotel' | 'voyage'): boolean {
+    if (type === 'voyage') return !!item.discountPrice_adult;
+    return !!(item.discountPrice_adult || this.hasSummerPrice(item));
+  }
+
+  hasSummerPrice(hotel: any): boolean {
+    if (!hotel.summer_prices) return false;
+    const s = hotel.summer_prices;
+    return !!(s.june?.adult || s.july?.adult || s.august?.adult || s.september?.adult);
   }
 }

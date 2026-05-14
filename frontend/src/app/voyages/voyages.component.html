@@ -6,27 +6,52 @@
 </div>
 
 <div class="listing-search-bar">
-  <div class="container">
-    <form class="simple-search" (ngSubmit)="onSearch()">
-      <div class="input-with-icon">
-        <i class="fas fa-map-marker-alt"></i>
-        <input type="text" name="destination" [(ngModel)]="searchData.destination" placeholder="Destination (Istanbul, Paris...)" list="destinations-v">
-      </div>
-      <div class="input-with-icon">
-        <i class="far fa-calendar-alt"></i>
-        <select name="month" [(ngModel)]="searchData.month">
-          <option value="" selected>Tous les mois</option>
-          <option value="juillet">Juillet</option>
-          <option value="aout">Août</option>
-          <option value="septembre">Septembre</option>
-        </select>
-      </div>
-      <div class="input-with-icon">
-        <i class="fas fa-user-friends"></i>
-        <input type="number" name="people" min="1" [(ngModel)]="searchData.people" placeholder="Personnes">
-      </div>
-      <button type="submit" class="btn-search-simple">Rechercher</button>
-    </form>
+  <div class="container search-container">
+    <div class="search-tabs">
+      <button class="tab-btn" [class.active]="searchType === 'hotel'" (click)="setSearchType('hotel')">
+        <i class="fas fa-hotel"></i> Hotel en Tunisie
+      </button>
+      <button class="tab-btn" [class.active]="searchType === 'voyage'" (click)="setSearchType('voyage')">
+        <i class="fas fa-plane"></i> Voyage Organisé
+      </button>
+      <button class="tab-btn" [class.active]="searchType === 'bus'" (click)="setSearchType('bus')">
+        <i class="fas fa-bus"></i> Option du Bus
+      </button>
+    </div>
+
+    <div class="search-card">
+      <form class="search-form" (ngSubmit)="onSearch()">
+        <div class="form-group">
+          <label><i class="fas fa-map-marker-alt"></i> Destination</label>
+          <input type="text" class="form-control" name="destination" [(ngModel)]="searchData.destination" placeholder="Où voulez-vous aller ?" list="destinations-v">
+        </div>
+        <div class="form-group">
+          <label><i class="far fa-calendar-alt"></i> Mois</label>
+          <select class="form-control" name="month" [(ngModel)]="searchData.month">
+            <option value="" disabled selected>Choisir un mois</option>
+            <option value="janvier">Janvier</option>
+            <option value="fevrier">Février</option>
+            <option value="mars">Mars</option>
+            <option value="avril">Avril</option>
+            <option value="mai">Mai</option>
+            <option value="juin">Juin</option>
+            <option value="juillet">Juillet</option>
+            <option value="aout">Août</option>
+            <option value="septembre">Septembre</option>
+            <option value="octobre">Octobre</option>
+            <option value="novembre">Novembre</option>
+            <option value="decembre">Décembre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-user-friends"></i> Personnes</label>
+          <input type="number" class="form-control" name="people" min="1" [(ngModel)]="searchData.people" placeholder="Nombre">
+        </div>
+        <button type="submit" class="btn-primary search-btn">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -88,6 +113,9 @@
         <div class="card-img-container">
           <img [src]="voyage.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=600'" [alt]="voyage.titre">
           <span class="badge" *ngIf="voyage.type">{{ voyage.type | titlecase }}</span>
+          <span class="promo-flame" *ngIf="voyage.discountPrice_adult">
+            🔥 PROMO
+          </span>
           <div class="card-overlay">
             <span><i class="fas fa-search-plus"></i> Voir les détails</span>
           </div>

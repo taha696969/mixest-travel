@@ -91,6 +91,9 @@
           <div class="card-img">
             <img [src]="voyage.image || 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=400'" [alt]="voyage.titre">
             <span class="card-badge">{{ voyage.type }}</span>
+            <div class="promo-flash" *ngIf="hasPromo(voyage, 'voyage')">
+              <i class="fas fa-bolt"></i> OFFRE FLASH
+            </div>
           </div>
           <div class="card-body">
             <h3>{{ voyage.titre }}</h3>
@@ -128,6 +131,9 @@
             <img [src]="hotel.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'" [alt]="hotel.nom">
             <div class="stars">
               <i class="fas fa-star" *ngFor="let s of [].constructor(hotel.etoiles)"></i>
+            </div>
+            <div class="promo-flash" *ngIf="hasPromo(hotel, 'hotel')">
+              <i class="far fa-clock"></i> DERNIÈRE MINUTE
             </div>
           </div>
           <div class="card-body">

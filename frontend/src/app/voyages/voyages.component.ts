@@ -18,6 +18,14 @@ export class VoyagesComponent implements OnInit {
     month: '',
     people: 1
   };
+  searchType: 'hotel' | 'voyage' | 'bus' = 'voyage';
+
+  setSearchType(type: 'hotel' | 'voyage' | 'bus') {
+    this.searchType = type;
+    if (type === 'hotel') this.router.navigate(['/hotels']);
+    if (type === 'voyage') this.router.navigate(['/voyages']);
+    if (type === 'bus') this.router.navigate(['/bus']);
+  }
 
   // Modal logic
   selectedVoyage: any = null;

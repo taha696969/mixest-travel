@@ -258,62 +258,130 @@ button {
 
 .bg-soft { background-color: #f0f4f8; }
 
-
-/* Simple Horizontal Search Bar */
-.listing-search-bar {
-  background: var(--primary);
-  padding: 15px 0;
-  margin-bottom: 40px;
-  position: sticky;
-  top: 75px; /* Adjust based on navbar height */
-  z-index: 900;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+/* ── Promo flame badge on public cards ───────────────── */
+.promo-flame {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #ff4e00, #ec9f05);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  z-index: 5;
+  pointer-events: none;
+  animation: flamePulse 1.6s ease-in-out infinite alternate;
+  box-shadow: 0 2px 8px rgba(255, 78, 0, 0.5);
 }
 
-.simple-search {
+@keyframes flamePulse {
+  from { transform: scale(1);    box-shadow: 0 2px 8px rgba(255, 78, 0, 0.4); }
+  to   { transform: scale(1.06); box-shadow: 0 4px 16px rgba(255, 78, 0, 0.7); }
+}
+
+/* ── Home Page Promo Flash ──────────────────────────── */
+.promo-flash {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(230, 57, 70, 0.9);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.65rem;
+  font-weight: 800;
   display: flex;
-  gap: 10px;
   align-items: center;
-  flex-wrap: wrap;
+  gap: 5px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+  animation: flashPulsate 2s infinite;
   
-  .input-with-icon {
-    flex: 1;
-    min-width: 150px;
-    background: #fff;
-    border-radius: 6px;
+  i { font-size: 0.7rem; }
+}
+
+@keyframes flashPulsate {
+  0% { transform: scale(1); box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 4px 20px rgba(230, 57, 70, 0.7); }
+  100% { transform: scale(1); box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4); }
+}
+
+
+
+/* Unified Search Bar (matches Home page style) */
+.listing-search-bar {
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 100;
+}
+
+.search-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.search-tabs {
+  display: flex;
+  gap: 5px;
+
+  .tab-btn {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px 12px 0 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
     display: flex;
     align-items: center;
-    padding: 0 12px;
-    height: 45px;
-    
-    i { color: #888; margin-right: 10px; }
-    
-    input, select {
-      border: none;
-      background: none;
-      width: 100%;
-      height: 100%;
-      outline: none;
-      font-size: 0.9rem;
-      color: var(--text-dark);
+    gap: 10px;
+    font-size: 0.95rem;
+
+    &.active {
+      background: #fff;
+      color: var(--secondary);
+    }
+
+    &:hover:not(.active) { background: rgba(0,0,0,0.9); }
+  }
+}
+
+.search-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 0 15px 15px 15px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.search-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 20px;
+  align-items: flex-end;
+
+  .form-group {
+    label {
+      font-size: 0.85rem;
+      color: #777;
+      margin-bottom: 8px;
+      display: block;
+      i { color: var(--secondary); }
     }
   }
 }
 
-.btn-search-simple {
-  background: var(--secondary);
-  color: white;
-  border: none;
-  padding: 0 25px;
-  height: 45px;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition);
-  
-  &:hover {
-    background: #e67e22;
-    transform: translateY(-2px);
-  }
+.search-btn {
+  white-space: nowrap;
+  padding: 13px 28px;
+}
+
+@media (max-width: 768px) {
+  .search-form { grid-template-columns: 1fr; }
+  .search-tabs { flex-wrap: wrap; }
+  .tab-btn { padding: 10px 16px; font-size: 0.85rem; }
 }
 

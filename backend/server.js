@@ -19,6 +19,7 @@ const searchRoutes = require('./routes/search');
 const authRoutes = require('./routes/auth');
 const volRoutes = require('./routes/vols');
 const reservationRoutes = require('./routes/reservations');
+const cityRoutes = require('./routes/cities');
 
 app.use('/api/hotels', hotelRoutes);
 app.use('/api/voyages', voyageRoutes);
@@ -27,6 +28,33 @@ app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/vols', volRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/cities', cityRoutes);
+
+// ── Stats endpoint for admin dashboard ──
+app.get('/api/stats', async (req, res) => {
+  try {
+    const Hotel = require('./models/Hotel');
+    const Voyage = require('./models/Voyage');
+    const Bus = require('./models/Bus');
+    const Vol = require('./models/Vol');
+    const Reservation = require('./models/Reservation');
+    const City = require('./models/City');
+    const [hotels, voyages, buses, vols, reservations, cities] = await Promise.all([
+      Hotel.countDocuments(),
+      Voyage.countDocuments(),
+      Bus.countDocuments(),
+      Vol.countDocuments(),
+      Reservation.countDocuments(),
+      City.countDocuments(),
+    ]);
+    const promoHotels = await Hotel.countDocuments({ $or: [{ discountPrice_adult: { $exists: true, $ne: null } }, { summer_prices: { $exists: true } }] });
+    const promoVoyages = await Voyage.countDocuments({ discountPrice_adult: { $exists: true, $ne: null } });
+    const pendingRes = await Reservation.countDocuments({ statut: 'en_attente' });
+    res.json({ hotels, voyages, buses, vols, reservations, cities, promoHotels, promoVoyages, pendingRes });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Serve Static Files (Angular)
 app.use(express.static(path.join(__dirname, 'public')));

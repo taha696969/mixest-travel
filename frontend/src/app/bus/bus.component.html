@@ -5,6 +5,56 @@
   </div>
 </div>
 
+<div class="listing-search-bar" style="margin-top: -60px; position: relative; z-index: 10;">
+  <div class="container search-container" style="position: relative; top: -30px; margin-bottom: -30px; z-index: 10;">
+    <div class="search-tabs">
+      <button class="tab-btn" [class.active]="searchType === 'hotel'" (click)="setSearchType('hotel')">
+        <i class="fas fa-hotel"></i> Hotel en Tunisie
+      </button>
+      <button class="tab-btn" [class.active]="searchType === 'voyage'" (click)="setSearchType('voyage')">
+        <i class="fas fa-plane"></i> Voyage Organisé
+      </button>
+      <button class="tab-btn" [class.active]="searchType === 'bus'" (click)="setSearchType('bus')">
+        <i class="fas fa-bus"></i> Option du Bus
+      </button>
+    </div>
+
+    <div class="search-card">
+      <form class="search-form" (ngSubmit)="onSearch()">
+        <div class="form-group">
+          <label><i class="fas fa-map-marker-alt"></i> Destination</label>
+          <input type="text" class="form-control" name="destination" [(ngModel)]="searchData.destination" placeholder="Où voulez-vous aller ?">
+        </div>
+        <div class="form-group">
+          <label><i class="far fa-calendar-alt"></i> Mois</label>
+          <select class="form-control" name="month" [(ngModel)]="searchData.month">
+            <option value="" disabled selected>Choisir un mois</option>
+            <option value="janvier">Janvier</option>
+            <option value="fevrier">Février</option>
+            <option value="mars">Mars</option>
+            <option value="avril">Avril</option>
+            <option value="mai">Mai</option>
+            <option value="juin">Juin</option>
+            <option value="juillet">Juillet</option>
+            <option value="aout">Août</option>
+            <option value="septembre">Septembre</option>
+            <option value="octobre">Octobre</option>
+            <option value="novembre">Novembre</option>
+            <option value="decembre">Décembre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-user-friends"></i> Personnes</label>
+          <input type="number" class="form-control" name="people" min="1" [(ngModel)]="searchData.people" placeholder="Nombre">
+        </div>
+        <button type="submit" class="btn-primary search-btn">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <section class="items-section container">
   <div *ngIf="buses.length === 0" class="no-data">
     <p>Aucun trajet de bus n'est disponible pour le moment.</p>

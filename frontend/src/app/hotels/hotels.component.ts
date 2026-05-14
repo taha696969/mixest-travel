@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-hotels',
@@ -17,6 +17,14 @@ export class HotelsComponent implements OnInit {
     month: '',
     people: 1
   };
+  searchType: 'hotel' | 'voyage' | 'bus' = 'hotel';
+
+  setSearchType(type: 'hotel' | 'voyage' | 'bus') {
+    this.searchType = type;
+    if (type === 'hotel') this.router.navigate(['/hotels']);
+    if (type === 'voyage') this.router.navigate(['/voyages']);
+    if (type === 'bus') this.router.navigate(['/bus']);
+  }
 
   // Modal
   selectedHotel: any = null;
@@ -31,7 +39,7 @@ export class HotelsComponent implements OnInit {
   submitting = false;
   today: string = new Date().toISOString().split('T')[0];
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {

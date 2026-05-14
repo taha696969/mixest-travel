@@ -9,45 +9,81 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
-  currentTab: 'hotels' | 'voyages' | 'bus' | 'vols' | 'reservations' = 'hotels';
-  
+  currentTab: 'dashboard' | 'hotels' | 'voyages' | 'bus' | 'vols' | 'reservations' | 'cities' = 'dashboard';
+
   hotels: any[] = [];
   voyages: any[] = [];
   buses: any[] = [];
   vols: any[] = [];
   reservations: any[] = [];
+  hotelCities: any[] = [];
+  voyageCities: any[] = [];
+
+  stats: any = {};
 
   hotelForm: any = this.initHotelForm();
   voyageForm: any = this.initVoyageForm();
   busForm: any = this.initBusForm();
   volForm: any = this.initVolForm();
+  cityForm: any = { name: '', type: 'hotel', description: '', image: '', pays: '' };
 
   isEditing = false;
-
-  hotelDestinations = [
-    'sousse', 'monastir', 'mahdia', 'port-el-kantaoui', 'hammamet', 'nabeul', 
-    'kelibia', 'djerba', 'zarzis', 'tozeur', 'douz', 'tunis', 'gammarth', 
-    'tabarka', 'ain-drahem', 'bizerte'
-  ];
-
-  voyageDestinations = [
-    'istanbul', 'dubai', 'sharm-el-sheikh', 'cairo', 'paris', 'rome', 
-    'barcelona', 'madrid', 'phuket', 'bali', 'maldives'
-  ];
 
   constructor(private http: HttpClient, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.fetchData('hotels');
+    this.loadStats();
+    this.loadCities();
   }
 
+  // ─── Stats ───────────────────────────────────────────────────────────────────
+  loadStats() {
+    this.http.get<any>('/api/stats').subscribe({
+      next: (data) => this.stats = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  // ─── Cities ──────────────────────────────────────────────────────────────────
+  loadCities() {
+    this.http.get<any[]>('/api/cities?type=hotel').subscribe({
+      next: (d) => this.hotelCities = d,
+      error: (err) => console.error(err)
+    });
+    this.http.get<any[]>('/api/cities?type=voyage').subscribe({
+      next: (d) => this.voyageCities = d,
+      error: (err) => console.error(err)
+    });
+  }
+
+  saveCity() {
+    this.http.post('/api/cities', this.cityForm).subscribe({
+      next: () => {
+        this.cityForm = { name: '', type: 'hotel', description: '', image: '', pays: '' };
+        this.loadCities();
+        this.loadStats();
+      },
+      error: (err) => alert('Erreur: ' + (err.error?.message || err.message))
+    });
+  }
+
+  deleteCity(id: string) {
+    if (confirm('Supprimer cette ville ?')) {
+      this.http.delete(`/api/cities/${id}`).subscribe({
+        next: () => { this.loadCities(); this.loadStats(); },
+        error: (err) => console.error(err)
+      });
+    }
+  }
+
+  // ─── Tab logic ───────────────────────────────────────────────────────────────
   initHotelForm() {
-    return { 
+    return {
       disponible: true,
       summer_prices: {
-        june: { adult: null, kid: null },
-        july: { adult: null, kid: null },
-        august: { adult: null, kid: null },
+        june:      { adult: null, kid: null },
+        july:      { adult: null, kid: null },
+        august:    { adult: null, kid: null },
         september: { adult: null, kid: null }
       }
     };
@@ -70,20 +106,25 @@ export class AdminComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  switchTab(tab: 'hotels' | 'voyages' | 'bus' | 'vols' | 'reservations') {
+  switchTab(tab: any) {
     this.currentTab = tab;
     this.resetForm();
-    this.fetchData(tab);
+    if (tab !== 'dashboard' && tab !== 'cities') {
+      this.fetchData(tab);
+    }
+    if (tab === 'dashboard') {
+      this.loadStats();
+    }
   }
 
   fetchData(type: string) {
     const allParam = type === 'reservations' ? '' : '?all=true';
     this.http.get<any[]>(`/api/${type}${allParam}`).subscribe({
       next: (data) => {
-        if (type === 'hotels') this.hotels = data;
-        if (type === 'voyages') this.voyages = data;
-        if (type === 'bus') this.buses = data;
-        if (type === 'vols') this.vols = data;
+        if (type === 'hotels')       this.hotels = data;
+        if (type === 'voyages')      this.voyages = data;
+        if (type === 'bus')          this.buses = data;
+        if (type === 'vols')         this.vols = data;
         if (type === 'reservations') this.reservations = data;
       },
       error: (err) => console.error(err)
@@ -94,9 +135,7 @@ export class AdminComponent implements OnInit {
     this.isEditing = true;
     if (this.currentTab === 'hotels') {
       this.hotelForm = JSON.parse(JSON.stringify(item));
-      if (!this.hotelForm.summer_prices) {
-        this.hotelForm.summer_prices = this.initHotelForm().summer_prices;
-      }
+      if (!this.hotelForm.summer_prices) this.hotelForm.summer_prices = this.initHotelForm().summer_prices;
     } else if (this.currentTab === 'voyages') {
       this.voyageForm = { ...item, stopPointsInput: item.stopPoints ? item.stopPoints.join(', ') : '' };
     } else if (this.currentTab === 'bus') {
@@ -107,21 +146,20 @@ export class AdminComponent implements OnInit {
   }
 
   deleteItem(id: string) {
-    if(confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
       this.http.delete(`/api/${this.currentTab}/${id}`).subscribe({
-        next: () => this.fetchData(this.currentTab),
+        next: () => { this.fetchData(this.currentTab); this.loadStats(); },
         error: (err) => console.error(err)
       });
     }
   }
 
   saveHotel() {
-    const action = this.isEditing 
+    const action = this.isEditing
       ? this.http.put(`/api/hotels/${this.hotelForm._id}`, this.hotelForm)
       : this.http.post('/api/hotels', this.hotelForm);
-
     action.subscribe({
-      next: () => { this.fetchData('hotels'); this.resetForm(); },
+      next: () => { this.fetchData('hotels'); this.resetForm(); this.loadStats(); },
       error: (err) => console.error(err)
     });
   }
@@ -133,9 +171,8 @@ export class AdminComponent implements OnInit {
     const action = this.isEditing
       ? this.http.put(`/api/voyages/${this.voyageForm._id}`, this.voyageForm)
       : this.http.post('/api/voyages', this.voyageForm);
-
     action.subscribe({
-      next: () => { this.fetchData('voyages'); this.resetForm(); },
+      next: () => { this.fetchData('voyages'); this.resetForm(); this.loadStats(); },
       error: (err) => console.error(err)
     });
   }
@@ -144,9 +181,8 @@ export class AdminComponent implements OnInit {
     const action = this.isEditing
       ? this.http.put(`/api/bus/${this.busForm._id}`, this.busForm)
       : this.http.post('/api/bus', this.busForm);
-
     action.subscribe({
-      next: () => { this.fetchData('bus'); this.resetForm(); },
+      next: () => { this.fetchData('bus'); this.resetForm(); this.loadStats(); },
       error: (err) => console.error(err)
     });
   }
@@ -155,24 +191,17 @@ export class AdminComponent implements OnInit {
     const action = this.isEditing
       ? this.http.put(`/api/vols/${this.volForm._id}`, this.volForm)
       : this.http.post('/api/vols', this.volForm);
-
     action.subscribe({
-      next: () => { this.fetchData('vols'); this.resetForm(); },
+      next: () => { this.fetchData('vols'); this.resetForm(); this.loadStats(); },
       error: (err) => console.error(err)
     });
   }
 
   addCompagnie() {
-    this.volForm.compagnies.push({ 
-      nom: '', 
-      logo: '', 
-      date_depart: '', 
-      date_arrivee: '', 
-      duree_texte: '', 
-      prix_adulte: 0, 
-      prix_enfant: 0, 
-      classe: 'Économique', 
-      disponible: true 
+    this.volForm.compagnies.push({
+      nom: '', logo: '', date_depart: '', date_arrivee: '',
+      duree_texte: '', prix_adulte: 0, prix_enfant: 0,
+      classe: 'Économique', disponible: true
     });
   }
 
@@ -189,9 +218,15 @@ export class AdminComponent implements OnInit {
 
   resetForm() {
     this.isEditing = false;
-    if (this.currentTab === 'hotels') this.hotelForm = this.initHotelForm();
+    if (this.currentTab === 'hotels')  this.hotelForm  = this.initHotelForm();
     if (this.currentTab === 'voyages') this.voyageForm = this.initVoyageForm();
-    if (this.currentTab === 'bus') this.busForm = this.initBusForm();
-    if (this.currentTab === 'vols') this.volForm = this.initVolForm();
+    if (this.currentTab === 'bus')     this.busForm    = this.initBusForm();
+    if (this.currentTab === 'vols')    this.volForm    = this.initVolForm();
+  }
+
+  hasPromo(item: any): boolean {
+    return !!(item.discountPrice_adult || item.discountPrice_kid ||
+              item.summer_prices?.june?.adult || item.summer_prices?.july?.adult ||
+              item.summer_prices?.august?.adult || item.summer_prices?.september?.adult);
   }
 }
