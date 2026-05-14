@@ -4,7 +4,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-RUN npm run build -- --output-path=dist
+RUN npm run build
 
 # Stage 2: Setup Node.js Backend
 FROM node:18-alpine
