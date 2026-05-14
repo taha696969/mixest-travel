@@ -8,7 +8,12 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (!all) filter.disponible = true;
     if (type) filter.type = type;
-    if (destination) filter.destination = new RegExp(destination, 'i');
+    if (destination) {
+      filter.$or = [
+        { destination: new RegExp(destination, 'i') },
+        { destination2: new RegExp(destination, 'i') }
+      ];
+    }
     if (pays) filter.pays = new RegExp(pays, 'i');
     const voyages = await Voyage.find(filter).sort({ price_adult: 1 });
     res.json(voyages);

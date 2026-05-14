@@ -175,6 +175,16 @@
           </select>
         </div>
         <div class="fg"><label>Durée (jours)</label><input type="number" [(ngModel)]="voyageForm.duree" name="duree" required></div>
+        <div class="fg"><label>Places Restantes</label><input type="number" [(ngModel)]="voyageForm.places_dispo" name="places_dispo"></div>
+        <div class="fg checkbox-fg">
+          <label><input type="checkbox" [(ngModel)]="voyageForm.isCombined" name="v_is_comb"> Voyage Combiné</label>
+        </div>
+        <div class="fg" *ngIf="voyageForm.isCombined">
+          <label>2ème Destination</label>
+          <select [(ngModel)]="voyageForm.destination2" name="v_dest2">
+            <option *ngFor="let c of voyageCities" [value]="c.slug">{{ c.name }}</option>
+          </select>
+        </div>
       </div>
       <div class="form-row">
         <div class="fg"><label>Prix Adulte</label><input type="number" [(ngModel)]="voyageForm.price_adult" name="price_adult" required></div>

@@ -20,6 +20,9 @@ const voyageSchema = new mongoose.Schema(
       enum: ['circuit', 'aventure', 'sejour', 'culturel'],
       default: 'circuit',
     },
+    isCombined: { type: Boolean, default: false },
+    destination2: { type: String },
+    places_dispo: { type: Number, default: 0 },
     disponible: { type: Boolean, default: true },
   },
   { timestamps: true }
